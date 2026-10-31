@@ -1,0 +1,96 @@
+spotbugs {
+    toolVersion = '4.9.8'
+    ignoreFailures = false
+    excludeFilter = file('config/spotbugs/exclude.xml')
+}
+
+dependencies {
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
+}
+
+def productionClasses = sourceSets.main.output.classesDirs.asFileTree.matching {
+    include '**/*.class'
+    exclude 'jp/xoki/web/zunda/jooq/**'
+}
+
+tasks.named('spotbugsMain') {
+    dependsOn tasks.named('classes')
+    classes = productionClasses
+    auxClassPaths.from(sourceSets.main.output)
+    sourceDirs.setFrom(file('src/main/java'))
+    reports.create('sarif') {
+        required = true
+        outputLocation = layout.buildDirectory.file('reports/spotbugs/local.sarif')
+    }
+}
+
+// Phase 1 covers production code only; check still enforces spotbugsMain.
+tasks.named('spotbugsTest') {
+    enabled = false
+}
+
+// The plugin suppresses some engine errors with ignoreFailures. Interpret the
+// engine's exact exit code here instead, without relaxing check/spotbugsMain.
+[
+        [name: 'spotbugsMr', flag: '-sarif', file: 'main.raw.sarif',
+         exitFile: 'exit-code.txt', prefix: 'mr',
+         description: 'Generates MR SARIF; only findings (exit 1) may proceed to reviewdog.'],
+        [name: 'spotbugsSonar', flag: '-xml:withMessages', file: 'sonar/main.xml',
+         exitFile: 'sonar/exit-code.txt', prefix: 'sonar',
+         description: 'Generates SonarQube XML; only findings (exit 1) may proceed to import.']
+].each { reportSpec ->
+    tasks.register(reportSpec.name, JavaExec) {
+        group = 'verification'
+        description = reportSpec.description
+        dependsOn tasks.named('classes')
+        classpath = configurations.spotbugs + configurations.spotbugsSlf4j
+        mainClass = 'edu.umd.cs.findbugs.FindBugs2'
+        javaLauncher = javaToolchains.launcherFor(java.toolchain)
+        workingDir = projectDir
+        maxHeapSize = '2g'
+        ignoreExitValue = true
+        inputs.files(configurations.spotbugsPlugins)
+
+        def report = layout.buildDirectory.file("reports/spotbugs/${reportSpec.file}")
+        def exitCodeFile = layout.buildDirectory.file("reports/spotbugs/${reportSpec.exitFile}")
+        def classList = layout.buildDirectory.file("spotbugs/${reportSpec.prefix}-classes.txt")
+        def auxList = layout.buildDirectory.file("spotbugs/${reportSpec.prefix}-auxclasspath.txt")
+        outputs.upToDateWhen { false }
+
+        doFirst {
+            def rawReport = report.get().asFile
+            rawReport.parentFile.mkdirs()
+            // Never publish a previous run's report if startup or analysis fails.
+            rawReport.delete()
+            exitCodeFile.get().asFile.delete()
+            def classFiles = productionClasses.files.sort { it.absolutePath }
+            if (classFiles.empty) {
+                throw new GradleException('No production classes are available for SpotBugs.')
+            }
+            classList.get().asFile.parentFile.mkdirs()
+            classList.get().asFile.setText(classFiles.collect { it.absolutePath }.join('\n') + '\n', 'UTF-8')
+            def auxiliaryFiles = (sourceSets.main.compileClasspath + sourceSets.main.output).files
+            auxList.get().asFile.setText(auxiliaryFiles.collect { it.absolutePath }.join('\n') + '\n', 'UTF-8')
+            setArgs([
+                    '-exitcode', "${reportSpec.flag}=${rawReport.absolutePath}",
+                    '-exclude', file('config/spotbugs/exclude.xml').absolutePath,
+                    '-pluginList', configurations.spotbugsPlugins.asPath,
+                    '-sourcepath', file('src/main/java').absolutePath,
+                    '-auxclasspathFromFile', auxList.get().asFile.absolutePath,
+                    '-analyzeFromFile', classList.get().asFile.absolutePath
+            ])
+        }
+
+        doLast {
+            // SpotBugs 4.9.8: BUGS_FOUND=1, MISSING_CLASS=2, ERROR=4.
+            def code = executionResult.get().exitValue
+            exitCodeFile.get().asFile.setText("${code}\n", 'UTF-8')
+            if (code != 0 && code != 1) {
+                throw new GradleException("SpotBugs engine failed (exit ${code}); do not publish analysis results.")
+            }
+            if (!report.get().asFile.isFile()) {
+                throw new GradleException('SpotBugs did not generate its analysis report.')
+            }
+        }
+    }
+}

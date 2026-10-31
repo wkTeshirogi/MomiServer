@@ -1,0 +1,1 @@
+export { UserMasterDetail } from './page'

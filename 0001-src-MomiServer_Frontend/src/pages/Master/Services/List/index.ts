@@ -1,0 +1,1 @@
+export { ServicesMasterList } from './page'

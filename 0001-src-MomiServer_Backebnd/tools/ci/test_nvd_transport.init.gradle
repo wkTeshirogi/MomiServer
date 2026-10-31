@@ -1,0 +1,83 @@
+import com.sun.net.httpserver.HttpServer
+import groovy.json.JsonOutput
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
+
+// Offline transport tests. Invoke with --init-script and testNvdTransportDiagnostic.
+allprojects {
+    afterEvaluate {
+        tasks.register('testNvdTransportDiagnostic') {
+            doLast {
+                def diagnostic = tasks.named('nvdTransportDiagnostic').get()
+                def secret = 'synthetic-only-not-a-real-key'
+                def status = new AtomicInteger(200)
+                def keyReceived = new AtomicReference<String>()
+                def redirects = new AtomicInteger()
+                def handlerFailure = new AtomicReference<Throwable>()
+                def body = JsonOutput.toJson([value: secret]).getBytes('UTF-8')
+                def server = HttpServer.create(new InetSocketAddress('127.0.0.1', 0), 0)
+                server.createContext('/api') { exchange ->
+                    try {
+                        keyReceived.set(exchange.requestHeaders.getFirst('apiKey'))
+                        exchange.responseHeaders.set('Content-Type', 'application/json')
+                        exchange.responseHeaders.set('Location', '/redirect')
+                        exchange.responseHeaders.set('message', secret)
+                        exchange.sendResponseHeaders(status.get(), body.length)
+                        exchange.responseBody.write(body)
+                        exchange.close()
+                    } catch (Throwable failure) {
+                        handlerFailure.set(failure)
+                        exchange.close()
+                    }
+                }
+                server.createContext('/redirect') { exchange ->
+                    redirects.incrementAndGet()
+                    exchange.sendResponseHeaders(200, -1)
+                    exchange.close()
+                }
+                server.createContext('/slow') { exchange ->
+                    try {
+                        Thread.sleep(1500)
+                        exchange.sendResponseHeaders(200, -1)
+                    } catch (IOException ignored) {
+                        // The deadline test intentionally closes the connection.
+                    } finally {
+                        exchange.close()
+                    }
+                }
+                server.start()
+                try {
+                    def uri = URI.create("http://127.0.0.1:${server.address.port}/api")
+                    for (int code : [200, 403, 429, 503, 302]) {
+                        status.set(code)
+                        def result = diagnostic.probe(uri, secret, 'FORCE_HTTP_1', 2)
+                        assert handlerFailure.get() == null
+                        assert result.httpStatus == code
+                        assert result.version == 'HTTP/1.1'
+                        assert result.bytes > 0 && result.jsonResponse
+                        assert result.errorType == 'none'
+                        assert keyReceived.get() == secret
+                        assert !JsonOutput.toJson(result).contains(secret)
+                    }
+                    assert redirects.get() == 0
+                    def noKey = diagnostic.probe(uri, null, 'FORCE_HTTP_1', 2)
+                    assert noKey.httpStatus == 302 && keyReceived.get() == null
+                    def slow = diagnostic.probe(uri.resolve('/slow'), secret, 'FORCE_HTTP_1', 1)
+                    assert slow.errorType == 'timeout'
+                    assert slow.elapsedMillis < 3000
+                    assert !JsonOutput.toJson(slow).contains(secret)
+                    def resetClass = diagnostic.class.classLoader.loadClass('org.apache.hc.core5.http2.H2StreamResetException')
+                    def reset = resetClass.getConstructor(Integer.TYPE, String).newInstance(8, secret)
+                    def failure = diagnostic.classifyFailure(new IOException(reset))
+                    assert failure.errorType == 'http2_stream_reset' && failure.http2ErrorCode == 8
+                    assert !JsonOutput.toJson(failure).contains(secret)
+                    assert diagnostic.classifyFailure(new javax.net.ssl.SSLException(secret)).errorType == 'tls_error'
+                    assert diagnostic.classifyFailure(new IOException(secret)).errorType == 'connection_or_io_error'
+                    println 'NVD Apache transport diagnostic: 11 offline scenarios passed.'
+                } finally {
+                    server.stop(0)
+                }
+            }
+        }
+    }
+}

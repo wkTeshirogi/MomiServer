@@ -1,0 +1,1 @@
+export { NotificationRouteSettingList } from './page'

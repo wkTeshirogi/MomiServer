@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    Checkstyle設定ファイル
+    対応規約：Javaコーディング規約 v1.0
+    最終更新：2026/05/25
+-->
+<module name="Checker">
+
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- ============================================================ -->
+    <!-- 1. ファイルレベルチェック                                       -->
+    <!-- ============================================================ -->
+
+    <!-- 1行120文字以内 -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        <message key="maxLineLength" value="1行は120文字以内で記述してください（現在: {0}文字）"/>
+    </module>
+
+    <!-- ============================================================ -->
+    <!-- 2. TreeWalkerチェック（クラス・メソッド・変数レベル）              -->
+    <!-- ============================================================ -->
+    <module name="TreeWalker">
+
+        <!-- ======================================================== -->
+        <!-- 2-1. 命名規則：lowerCamelCase（変数・メソッド）              -->
+        <!-- ======================================================== -->
+
+        <!-- ローカル変数名：lowerCamelCase -->
+        <module name="LocalVariableName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="変数名 ''{0}'' はlowerCamelCaseで記述してください（先頭小文字、複数単語は次の単語頭を大文字）"/>
+        </module>
+
+        <!-- ローカル定数名（final変数）：lowerCamelCase または UPPER_SNAKE_CASE -->
+        <module name="LocalFinalVariableName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+            <message key="name.invalidPattern"
+                     value="final変数名 ''{0}'' はlowerCamelCaseまたはUPPER_SNAKE_CASEで記述してください"/>
+        </module>
+
+        <!-- メンバ変数名：lowerCamelCase -->
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="フィールド名 ''{0}'' はlowerCamelCaseで記述してください"/>
+        </module>
+
+        <!-- メソッドの引数名：lowerCamelCase -->
+        <module name="ParameterName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="引数名 ''{0}'' はlowerCamelCaseで記述してください"/>
+        </module>
+
+        <!-- メソッド名：lowerCamelCase -->
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="メソッド名 ''{0}'' はlowerCamelCaseで記述してください"/>
+        </module>
+
+        <!-- クラス名：UpperCamelCase -->
+        <module name="TypeName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="クラス名 ''{0}'' はUpperCamelCaseで記述してください"/>
+        </module>
+
+        <!-- 定数名（static final）：UPPER_SNAKE_CASE -->
+        <module name="ConstantName">
+            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+            <message key="name.invalidPattern"
+                     value="定数名 ''{0}'' はUPPER_SNAKE_CASEで記述してください"/>
+        </module>
+
+        <!-- パッケージ名：全小文字 -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-zA-Z_][a-zA-Z0-9_]*)*$"/>
+            <message key="name.invalidPattern"
+                     value="パッケージ名 ''{0}'' は小文字で記述してください"/>
+        </module>
+
+        <!-- ======================================================== -->
+        <!-- 2-2. コードの折り返し                                       -->
+        <!-- ======================================================== -->
+
+        <!-- 1行あたりのトークン数チェック（過度な1行記述を抑制） -->
+        <!-- メソッド引数が多い場合に改行を促す -->
+        <module name="MethodLength">
+            <property name="max" value="150"/>
+            <property name="countEmpty" value="false"/>
+            <message key="maxLen.method"
+                     value="メソッドの行数が多すぎます（{0}行）。処理を分割してください"/>
+        </module>
+
+        <!-- 引数の数チェック（多すぎる場合は改行しやすくするため分割を促す） -->
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+            <message key="maxParam"
+                     value="引数が多すぎます（{0}個）。オブジェクトへの集約を検討してください"/>
+        </module>
+
+        <!-- ======================================================== -->
+        <!-- 2-3. インポート                                            -->
+        <!-- ======================================================== -->
+
+        <!-- ワイルドカードインポート禁止 -->
+        <module name="AvoidStarImport">
+            <message key="import.avoidStar"
+                     value="ワイルドカードインポート（import {0}.*）は使用しないでください"/>
+        </module>
+
+        <!-- 未使用インポート禁止 -->
+        <module name="UnusedImports">
+            <message key="import.unused"
+                     value="未使用のインポート ''{0}'' を削除してください"/>
+        </module>
+
+        <!-- ======================================================== -->
+        <!-- 2-4. コーディングスタイル                                   -->
+        <!-- ======================================================== -->
+
+        <!-- 空のブロック禁止（try-catchの空catch等） -->
+        <module name="EmptyBlock">
+            <property name="option" value="TEXT"/>
+            <message key="block.empty"
+                     value="空のブロックには必ずコメントを記述してください"/>
+        </module>
+
+        <!-- 中括弧の省略禁止（if/for/while） -->
+        <module name="NeedBraces">
+            <message key="needBraces"
+                     value="''{0}'' ブロックは中括弧を省略しないでください"/>
+        </module>
+
+        <!-- 左中括弧の位置（同一行） -->
+        <module name="LeftCurly">
+            <message key="line.previous"
+                     value="左中括弧は前の行と同じ行に記述してください"/>
+        </module>
+
+        <!-- 右中括弧の位置（新しい行） -->
+        <module name="RightCurly">
+            <message key="line.alone"
+                     value="右中括弧は単独の行に記述してください"/>
+        </module>
+
+        <!-- ======================================================== -->
+        <!-- 2-5. Javadoc・コメント                                     -->
+        <!-- ======================================================== -->
+
+        <!-- publicメソッドにはJavadocを必須とする -->
+        <module name="JavadocMethod">
+            <property name="accessModifiers" value="public"/>
+            <property name="allowMissingParamTags" value="false"/>
+            <property name="allowMissingReturnTag" value="false"/>
+            <message key="javadoc.missing"
+                     value="publicメソッドにはJavadocコメントを記述してください"/>
+        </module>
+
+        <!-- publicクラスにはJavadocを必須とする -->
+        <module name="JavadocType">
+            <property name="scope" value="public"/>
+            <message key="javadoc.missing"
+                     value="publicクラスにはJavadocコメントを記述してください"/>
+        </module>
+
+        <!-- ======================================================== -->
+        <!-- 2-6. その他品質チェック                                     -->
+        <!-- ======================================================== -->
+
+        <!-- マジックナンバー禁止（定数化を促す） -->
+        <module name="MagicNumber">
+            <property name="ignoreNumbers" value="-1, 0, 1, 2"/>
+            <property name="ignoreAnnotation" value="true"/>
+            <message key="magic.number"
+                     value="マジックナンバー ''{0}'' は定数として定義してください"/>
+        </module>
+
+        <!-- 等値比較はequals()を使用 -->
+        <module name="StringLiteralEquality">
+            <message key="string.literalEqualityCheck"
+                     value="文字列の比較には '==' ではなく 'equals()' を使用してください"/>
+        </module>
+
+        <!-- 冗長なboolean式の排除 -->
+        <module name="SimplifyBooleanExpression">
+            <message key="simplify.expression"
+                     value="boolean式を簡略化してください"/>
+        </module>
+
+        <!-- 冗長なbooleanリターンの排除 -->
+        <module name="SimplifyBooleanReturn">
+            <message key="simplify.booleanReturn"
+                     value="booleanのreturn文を簡略化してください"/>
+        </module>
+
+    </module>
+
+</module>

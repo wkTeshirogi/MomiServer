@@ -1,0 +1,1 @@
+go build -trimpath -o .\dist\momiserver-agent.exe .

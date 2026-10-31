@@ -1,0 +1,129 @@
+import groovy.json.JsonOutput
+import java.net.ProxySelector
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLException
+import org.apache.hc.client5.http.async.methods.SimpleHttpRequest
+import org.apache.hc.client5.http.config.ConnectionConfig
+import org.apache.hc.client5.http.config.RequestConfig
+import org.apache.hc.client5.http.config.TlsConfig
+import org.apache.hc.client5.http.impl.async.HttpAsyncClients
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner
+import org.apache.hc.core5.http2.H2StreamResetException
+import org.apache.hc.core5.http2.HttpVersionPolicy
+import org.apache.hc.core5.io.CloseMode
+import org.apache.hc.core5.util.Timeout
+import org.gradle.work.DisableCachingByDefault
+
+buildscript {
+    dependencies {
+        classpath files(project.buildscript.configurations.classpath)
+    }
+}
+
+@DisableCachingByDefault(because = 'Live NVD connection results must not be reused.')
+abstract class NvdTransportDiagnostic extends DefaultTask {
+    @OutputFile
+    abstract RegularFileProperty getReportFile()
+
+    @TaskAction
+    void diagnose() {
+        def key = System.getenv('NVD_API_KEY')
+        def results = []
+        def report = reportFile.get().asFile
+        report.parentFile.mkdirs()
+        for (String policy : ['FORCE_HTTP_2', 'FORCE_HTTP_1']) {
+            logger.lifecycle('NVD Apache diagnostic: testing {} with 2000 records (45-second bound).', policy)
+            def result = probe(URI.create('https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=2000&startIndex=0'),
+                    key, policy, 45)
+            results.add(result)
+            report.setText(JsonOutput.prettyPrint(JsonOutput.toJson([
+                    keyPresent: key != null && !key.isBlank(), results: results])), 'UTF-8')
+            logger.lifecycle('NVD Apache diagnostic: {}', JsonOutput.toJson(result))
+            if (Thread.currentThread().isInterrupted()) {
+                break
+            }
+        }
+        logger.lifecycle('NVD transport diagnostics do not change the scanner protocol or certify a full update.')
+    }
+
+    // Testable against loopback; production always uses the fixed NVD endpoint above.
+    static Map probe(URI endpoint, String key, String policy, long deadlineSeconds) {
+        def result = [policy: policy, httpStatus: null, version: null, bytes: 0,
+                      jsonResponse: false, errorType: 'none', http2ErrorCode: null]
+        def start = System.nanoTime()
+        def manager = null
+        def client = null
+        def pending = null
+        try {
+            manager = PoolingAsyncClientConnectionManagerBuilder.create()
+                    .setDefaultConnectionConfig(ConnectionConfig.custom()
+                            .setConnectTimeout(Timeout.ofSeconds(15))
+                            .setSocketTimeout(Timeout.ofSeconds(30)).build())
+                    .setDefaultTlsConfig(TlsConfig.custom()
+                            .setVersionPolicy(HttpVersionPolicy.valueOf(policy))
+                            .setHandshakeTimeout(Timeout.ofSeconds(15)).build())
+                    .useSystemProperties().build()
+            client = HttpAsyncClients.custom().setConnectionManager(manager)
+                    .setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+                    .setDefaultRequestConfig(RequestConfig.custom()
+                            .setResponseTimeout(Timeout.ofSeconds(30)).build())
+                    .disableAutomaticRetries().disableRedirectHandling().useSystemProperties().build()
+            client.start()
+            def request = SimpleHttpRequest.create('GET', endpoint)
+            request.setHeader('Accept', 'application/json')
+            if (key != null && !key.isBlank()) {
+                request.setHeader('apiKey', key)
+            }
+            pending = client.execute(request, null)
+            def response = pending.get(deadlineSeconds, TimeUnit.SECONDS)
+            result.httpStatus = response.code
+            result.version = response.version?.toString()
+            result.bytes = response.bodyBytes?.length ?: 0
+            result.jsonResponse = response.contentType?.toString()?.toLowerCase(Locale.ROOT)?.startsWith('application/json') ?: false
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt()
+            result.errorType = 'interrupted'
+        } catch (Exception exception) {
+            def cause = exception
+            def types = []
+            for (int depth = 0; cause != null && depth < 10; depth++, cause = cause.cause) {
+                types.add(cause.class.simpleName)
+            }
+            result.errorClasses = types
+            result.putAll(classifyFailure(exception))
+        } finally {
+            pending?.cancel(true)
+            client?.close(CloseMode.GRACEFUL)
+            if (client == null) {
+                manager?.close(CloseMode.IMMEDIATE)
+            }
+        }
+        result.elapsedMillis = (System.nanoTime() - start).intdiv(1_000_000)
+        return result
+    }
+
+    // Only controlled codes are returned; exception messages can contain secrets.
+    static Map classifyFailure(Throwable exception) {
+        for (int depth = 0; exception != null && depth < 10; depth++, exception = exception.cause) {
+            if (exception instanceof H2StreamResetException) {
+                return [errorType: 'http2_stream_reset', http2ErrorCode: exception.code]
+            }
+            if (exception instanceof TimeoutException || exception instanceof java.net.SocketTimeoutException) {
+                return [errorType: 'timeout', http2ErrorCode: null]
+            }
+            if (exception instanceof SSLException) {
+                return [errorType: 'tls_error', http2ErrorCode: null]
+            }
+        }
+        return [errorType: 'connection_or_io_error', http2ErrorCode: null]
+    }
+}
+
+tasks.register('nvdTransportDiagnostic', NvdTransportDiagnostic) {
+    group = 'verification'
+    description = 'Compare Apache HTTP/2 and HTTP/1.1 NVD requests without logging credentials or CVE content.'
+    reportFile = layout.buildDirectory.file('reports/dependency-check-ci/nvd-transport.json')
+    outputs.upToDateWhen { false }
+}

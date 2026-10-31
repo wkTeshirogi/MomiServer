@@ -1,0 +1,1 @@
+export { BatchGlobalSettings } from './page'

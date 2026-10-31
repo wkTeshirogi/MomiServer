@@ -1,0 +1,22 @@
+[Unit]
+Description=Zunda PostgreSQL database
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+ContainerName=zunda-db
+Image=zunda-postgres:latest
+Volume=zunda-pgdata:/var/lib/postgresql/data
+PublishPort=5432:5432
+Environment=TZ=Asia/Tokyo
+Environment=POSTGRES_DB=zunda
+Environment=POSTGRES_USER=zunda_user
+EnvironmentFile=%h/.config/zunda-db/zunda-db.env
+
+[Service]
+Restart=always
+TimeoutStopSec=70
+
+[Install]
+WantedBy=default.target
+

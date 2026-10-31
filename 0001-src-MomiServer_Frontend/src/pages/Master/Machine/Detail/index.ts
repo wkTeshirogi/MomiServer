@@ -1,0 +1,1 @@
+export { MachineMasterDetail } from './page'

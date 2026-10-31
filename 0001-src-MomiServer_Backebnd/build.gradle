@@ -1,0 +1,315 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath platform("com.fasterxml.jackson:jackson-bom:${providers.gradleProperty('jacksonBomVersion').get()}")
+        constraints {
+            classpath("org.apache.commons:commons-lang3:${providers.gradleProperty('commonsLangVersion').get()}") {
+                because 'CVE-2025-48924: avoid unbounded ClassUtils recursion in Gradle tooling'
+            }
+            classpath('org.bouncycastle:bcprov-jdk18on:1.80.2') {
+                because 'CVE-2025-14813: use the compatible GOST CTR security backport'
+            }
+            classpath('org.jsoup:jsoup:1.23.2') {
+                because 'CVE-2026-75140: bound XML namespace processing'
+            }
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'org.springframework.boot' version '3.5.0'           // 4.0.6 は存在しない
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.sonarqube' version '6.2.0.5505'
+    id 'nu.studer.jooq' version '10.1'
+    id 'com.github.spotbugs' version '6.0.9'
+    id 'org.owasp.dependencycheck' version '13.0.0'
+}
+
+group = 'jp.xoki.web.zunda'
+version = '0.0.1-SNAPSHOT'
+description = 'SmartHomeWebServerBackend'
+
+ext {
+    jooqCodegenVersion = '3.20.3'
+    set('jooq.version', jooqCodegenVersion)
+    // Keep application and Gradle tooling on the same patched Jackson 2.x BOM.
+    set('jackson-bom.version', providers.gradleProperty('jacksonBomVersion').get())
+
+    // Align the embedded container and every JDBC consumer on security patch releases.
+    set('tomcat.version', providers.gradleProperty('tomcatVersion').get())
+    set('postgresql.version', providers.gradleProperty('postgresqlVersion').get())
+    set('commons-lang3.version', providers.gradleProperty('commonsLangVersion').get())
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    flywayMigration
+    mockitoAgent {
+        transitive = false
+    }
+}
+
+dependencies {
+    constraints {
+        implementation("org.webjars:swagger-ui:${providers.gradleProperty('swaggerUiVersion').get()}") {
+            because 'Replace the Swagger UI bundle containing vulnerable DOMPurify'
+        }
+    }
+
+    // --- Core ---
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    flywayMigration 'org.flywaydb:flyway-core'
+    flywayMigration 'org.flywaydb:flyway-database-postgresql'
+    flywayMigration 'org.postgresql:postgresql'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.8'
+
+    // --- jOOQ ---
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    jooqGenerator "org.jooq:jooq:${jooqCodegenVersion}"
+    jooqGenerator "org.jooq:jooq-meta:${jooqCodegenVersion}"
+    jooqGenerator "org.jooq:jooq-codegen:${jooqCodegenVersion}"
+    jooqGenerator 'org.postgresql:postgresql'
+
+    // --- JWT (0.13.0 は存在しない → 0.12.6) ---
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // --- DB ---
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // --- Lombok ---
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // --- Test ---
+    // Testcontainers BOM を platform() で取り込むことでバージョンを一元管理
+    testImplementation platform('org.testcontainers:testcontainers-bom:1.21.3')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation 'org.postgresql:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'       // バージョン指定不要
+    testImplementation 'org.testcontainers:postgresql'          // バージョン指定不要
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    mockitoAgent 'org.mockito:mockito-core'
+
+    implementation 'com.github.javaparser:javaparser-core:3.26.4'
+}
+
+tasks.register('flywayMigrateOnly') {
+    group = 'database'
+    description = 'Runs Flyway migrations only, without bootRun, compileJava, or jOOQ generation.'
+
+    doLast {
+        def jdbcUrl = System.getenv('FLYWAY_DB_URL')
+                ?: System.getenv('DB_URL')
+                ?: "jdbc:postgresql://${System.getenv('DB_HOST') ?: 'localhost'}:${System.getenv('DB_PORT') ?: '5432'}/${System.getenv('DB_NAME') ?: 'zunda'}"
+        def dbUser = System.getenv('FLYWAY_DB_USER') ?: System.getenv('DB_USERNAME') ?: 'zunda_user'
+        def dbPassword = System.getenv('FLYWAY_DB_PASSWORD') ?: System.getenv('DB_PASSWORD') ?: 'zunda_pass'
+        def migrationLocation = "filesystem:${file('src/main/resources/db/migration').absolutePath.replace('\\', '/')}"
+        def urls = configurations.flywayMigration.resolve().collect { it.toURI().toURL() } as URL[]
+        def classLoader = new URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
+        def previousClassLoader = Thread.currentThread().contextClassLoader
+
+        try {
+            Thread.currentThread().contextClassLoader = classLoader
+
+            def flywayClass = classLoader.loadClass('org.flywaydb.core.Flyway')
+            def fluentConfiguration
+            try {
+                fluentConfiguration = flywayClass.getMethod('configure', ClassLoader).invoke(null, classLoader)
+            } catch (NoSuchMethodException ignored) {
+                fluentConfiguration = flywayClass.getMethod('configure').invoke(null)
+            }
+
+            fluentConfiguration
+                    .dataSource(jdbcUrl, dbUser, dbPassword)
+                    .locations(migrationLocation)
+                    .baselineOnMigrate(true)
+                    .validateOnMigrate(false)
+
+            def result = fluentConfiguration.load().migrate()
+            logger.lifecycle("Flyway migration complete: ${result.migrationsExecuted} migration(s) executed.")
+        } finally {
+            Thread.currentThread().contextClassLoader = previousClassLoader
+            classLoader.close()
+        }
+    }
+}
+
+// -------------------------------------------------------
+// jOOQ コード生成設定
+// ブロック名: jooqConfiguration → generationTool が正しい
+// 事前に Docker の PostgreSQL コンテナを起動しておくこと:
+//   docker start zunda-db
+// 生成コマンド: ./gradlew generateJooq
+// -------------------------------------------------------
+jooq {
+    version = jooqCodegenVersion
+    edition = nu.studer.gradle.jooq.JooqEdition.OSS
+
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = false
+
+            generationTool {                                // ← jooqConfiguration ではなく generationTool
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver   = 'org.postgresql.Driver'
+                    url      = System.getenv('JOOQ_DB_URL') ?: "jdbc:postgresql://${System.getenv('DB_HOST') ?: 'localhost'}:${System.getenv('DB_PORT') ?: '5432'}/${System.getenv('DB_NAME') ?: 'zunda'}"
+                    user     = System.getenv('JOOQ_DB_USER') ?: System.getenv('DB_USERNAME') ?: 'zunda_user'
+                    password = System.getenv('JOOQ_DB_PASSWORD') ?: System.getenv('DB_PASSWORD') ?: 'zunda_pass'
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name        = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        excludes    = 'flyway_schema_history'
+                    }
+                    generate {
+                        deprecated    = false
+                        records       = true
+                        pojos         = true
+                        daos          = false
+                        fluentSetters = true
+                        implicitJoinPathsToMany = false
+                    }
+                    target {
+                        packageName = 'jp.xoki.web.zunda.jooq'
+                        directory   = 'build/generated/jooq'
+                    }
+                    strategy {
+                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += ['build/generated/jooq']
+        }
+    }
+}
+
+// -------------------------------------------------------
+// Checkstyle
+// -------------------------------------------------------
+checkstyle {
+    toolVersion = '10.14.2'
+    configFile = file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = true
+}
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+apply from: 'gradle/message-catalog.gradle'
+apply from: 'gradle/spotbugs.gradle'
+apply from: 'gradle/dependency-check.gradle'
+
+// -------------------------------------------------------
+// Test
+// -------------------------------------------------------
+jacoco {
+    // Java 25 support and filtering for javac-generated switch branches.
+    toolVersion = '0.8.15'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        // Preserve the PostgreSQL root cause when a cached Spring context cannot start.
+        exceptionFormat = 'full'
+    }
+    finalizedBy(tasks.named('jacocoTestReport'))
+    doFirst {
+        jvmArgs "-Xshare:off", "-javaagent:${configurations.mockitoAgent.singleFile.absolutePath}"
+    }
+}
+
+tasks.named('jacocoTestReport') {
+    // A hard test dependency would skip this finalizer when tests fail.
+    mustRunAfter(tasks.named('test'))
+    classDirectories.setFrom(sourceSets.main.output.classesDirs.asFileTree.matching {
+        exclude 'jp/xoki/web/zunda/jooq/**'
+        exclude 'jp/xoki/web/zunda/smarthomewebserverbackend/*/constants/*MessageConstants.class'
+    })
+    reports {
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml')
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn(tasks.named('generateJooq'))
+}
+
+// -------------------------------------------------------
+// SonarQube
+// -------------------------------------------------------
+sonar {
+    properties {
+        property 'sonar.projectKey', 'momiServer'
+        property 'sonar.projectName', 'momiServer'
+        property 'sonar.host.url', 'http://sonar.zundamochi.local'
+        property 'sonar.token', System.getenv('SONAR_TOKEN')
+        // Keep generated jOOQ sources out of analysis; retain handwritten sources and tests.
+        property 'sonar.exclusions', 'build/generated/jooq/**,build/generated/message-catalog/**'
+        property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+        property 'sonar.java.spotbugs.reportPaths', 'build/reports/spotbugs/sonar/main.xml'
+        property 'sonar.junit.reportPaths', 'build/test-results/test'
+    }
+}
+// -------------------------------------------------------
+// 詳細設計書生成タスク（JavaParser使用）
+// 実行: ./gradlew generateDesignDoc
+// 出力: docs/design/ 以下に Markdown を生成
+// -------------------------------------------------------
+tasks.register('generateDesignDoc', JavaExec) {
+    group       = 'documentation'
+    description = '詳細設計書をMarkdown形式で生成します'
+    classpath   = sourceSets.main.runtimeClasspath  // ← configurations.designDocTool は不要
+    mainClass   = 'jp.xoki.web.zunda.smarthomewebserverbackend.tools.DesignDocGenerator'
+    workingDir  = projectDir
+
+    doFirst {
+        mkdir 'docs/design'
+    }
+}

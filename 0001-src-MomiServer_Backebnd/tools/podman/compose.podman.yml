@@ -1,0 +1,19 @@
+services:
+  zunda-db:
+    image: zunda-postgres:latest
+    container_name: zunda-db
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_DB: zunda
+      POSTGRES_USER: zunda_user
+      POSTGRES_PASSWORD: zunda_pass
+    volumes:
+      - zunda-pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  zunda-pgdata:
+    external: true
+

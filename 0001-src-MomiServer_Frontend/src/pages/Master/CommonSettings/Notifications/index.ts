@@ -1,0 +1,1 @@
+export { NotificationGlobalSettings } from './page'

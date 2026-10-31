@@ -1,0 +1,70 @@
+import java.time.Duration
+
+apply from: 'gradle/nvd-transport-diagnostic.gradle'
+
+def reportOnly = providers.gradleProperty('dependencyCheckReportOnly').orElse('false')
+if (!(reportOnly.get() in ['true', 'false'])) {
+    throw new GradleException('dependencyCheckReportOnly must be true or false.')
+}
+
+dependencyCheck {
+    scanConfigurations = ['runtimeClasspath']
+    scanBuildEnv = false
+    // Explicit JAR inputs also cover Gradle artifact views that omit runtime files.
+    // Never scan unrelated resources, test tooling, or generated application classes.
+    scanSet = [configurations.runtimeClasspath]
+    formats = ['HTML', 'JSON', 'SARIF']
+    outputDirectory = layout.buildDirectory.dir('reports/dependency-check').get().asFile
+    failOnError = true
+    failBuildOnCVSS = reportOnly.get() == 'true' ? 11.0f : 7.0f
+    autoUpdate = true
+    connectionTimeout = Duration.ofSeconds(15)
+    readTimeout = Duration.ofSeconds(60)
+    nvd {
+        def configuredKey = providers.environmentVariable('NVD_API_KEY').orNull
+        if (configuredKey?.trim()) {
+            apiKey = configuredKey
+            delay = 6000
+        }
+        // Keep the upstream default: low values cause misleading warnings even for HTTP 200.
+        maxRetryCount = 10
+        validForHours = 4
+    }
+    // OSS Index requires separate credentials; NVD remains the CVE source.
+    analyzers {
+        ossIndex {
+            enabled = false
+        }
+    }
+    data {
+        directory = layout.projectDirectory.dir('.dependency-check').asFile.absolutePath
+    }
+}
+
+// Plugin 13.0.0 sets a task-local default that overrides the extension convention.
+// Bind the provider explicitly so analysis, updates and purge share the CI cache.
+def nvdDataDirectory = dependencyCheck.data.directory
+['dependencyCheckAnalyze', 'dependencyCheckAggregate', 'dependencyCheckUpdate', 'dependencyCheckPurge'].each { taskName ->
+    tasks.named(taskName) {
+        data.directory.set(nvdDataDirectory)
+    }
+}
+
+tasks.named('dependencyCheckAnalyze') {
+    // CVE data changes even when the source and dependency versions do not.
+    outputs.upToDateWhen { false }
+    doFirst {
+        // Failed updates or analysis must never expose an earlier successful report.
+        delete(outputDir.get().asFile)
+        logger.lifecycle('Dependency-Check mode: {} (tool errors always fail).',
+                reportOnly.get() == 'true' ? 'report only' : 'CVSS >= 7 fails')
+        logger.lifecycle('Dependency-Check NVD cache directory: {}', data.directory.get())
+    }
+    doLast {
+        def report = outputDir.file('dependency-check-report.json').get().asFile
+        def result = new groovy.json.JsonSlurper().parse(report)
+        if (!(result.dependencies instanceof List) || result.dependencies.empty) {
+            throw new GradleException('Dependency-Check generated an empty dependency inventory; analysis is incomplete.')
+        }
+    }
+}

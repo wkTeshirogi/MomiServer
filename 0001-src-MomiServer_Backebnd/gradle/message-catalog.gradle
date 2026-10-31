@@ -1,0 +1,149 @@
+import groovy.json.JsonSlurper
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
+import javax.inject.Inject
+
+// Compile-time constants also work with Bean Validation annotations, without a
+// second handwritten copy of the text or a custom runtime interpolator.
+class MessageConstantsRenderer {
+    static Map<String, String> render(Object catalog) {
+        if (!(catalog instanceof Map) || !(catalog.messages instanceof Map)) {
+            throw new GradleException('Message catalog must contain a messages object.')
+        }
+        Map<String, Map<String, String>> categories = new TreeMap<>()
+        catalog.messages.each { key, definition ->
+            if (!(key instanceof String) || !(key ==~ /[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+/)
+                    || !(definition instanceof Map) || !(definition.text instanceof String)
+                    || !(definition.visibility in ['public', 'private'])) {
+                throw new GradleException("Invalid message definition: ${key}")
+            }
+            if (!definition.containsKey('java')) return
+            def binding = definition.java
+            if (!(binding instanceof Map) || !(binding.category instanceof String)
+                    || !(binding.category ==~ /[a-z][a-z0-9]*/)
+                    || !(binding.name instanceof String) || !(binding.name ==~ /[A-Z][A-Z0-9_]*/)) {
+                throw new GradleException("Invalid Java message binding: ${key}")
+            }
+            Map<String, String> fields = categories.computeIfAbsent(binding.category) { new TreeMap<String, String>() }
+            if (fields.putIfAbsent(binding.name, definition.text) != null) {
+                throw new GradleException("Duplicate Java message constant: ${binding.category}.${binding.name}")
+            }
+        }
+        Map<String, String> files = new LinkedHashMap<>()
+        categories.each { category, fields ->
+            String className = category.capitalize() + 'MessageConstants'
+            String packageName = "jp.xoki.web.zunda.smarthomewebserverbackend.${category}.constants"
+            String declarations = fields.collect { name, text ->
+                "    public static final String ${name} = ${javaString(text)};"
+            }.join('\n\n')
+            files[packageName.replace('.', '/') + '/' + className + '.java'] = """// Generated from message-catalog/messages.ja.json. Do not edit.
+package ${packageName};
+
+/** Generated message templates for ${category}. */
+public final class ${className} {
+
+${declarations}
+
+    private ${className}() {
+    }
+}
+"""
+        }
+        return files
+    }
+
+    private static String javaString(String text) {
+        StringBuilder escaped = new StringBuilder('"')
+        text.toCharArray().each { char value ->
+            switch (value) {
+                case '\\': escaped.append('\\\\'); break
+                case '"': escaped.append('\\"'); break
+                case '\n': escaped.append('\\n'); break
+                case '\r': escaped.append('\\r'); break
+                case '\t': escaped.append('\\t'); break
+                default:
+                    if (value < 32) escaped.append(String.format('\\%03o', (int) value))
+                    else escaped.append(value)
+            }
+        }
+        return escaped.append('"').toString()
+    }
+}
+
+abstract class GenerateMessageConstants extends DefaultTask {
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract RegularFileProperty getCatalogFile()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+
+    @Internal
+    abstract DirectoryProperty getBuildRoot()
+
+    @Inject
+    abstract FileSystemOperations getFileSystemOperations()
+
+    @TaskAction
+    void generate() {
+        // Validate every definition before touching the previous generated output.
+        Map<String, String> files = MessageConstantsRenderer.render(
+                new JsonSlurper().parse(catalogFile.get().asFile, 'UTF-8'))
+        File output = outputDirectory.get().asFile
+        String root = buildRoot.get().asFile.canonicalPath + File.separator
+        if (!output.canonicalPath.startsWith(root)) {
+            throw new GradleException('Generated messages must remain inside the build directory.')
+        }
+        fileSystemOperations.delete { delete(output) }
+        files.each { relative, source ->
+            File target = new File(output, relative)
+            target.parentFile.mkdirs()
+            target.setText(source, 'UTF-8')
+        }
+    }
+}
+
+def generateMessageConstants = tasks.register('generateMessageConstants', GenerateMessageConstants) {
+    group = 'build'
+    description = 'Generates category-specific Java message constants from the shared catalog.'
+    catalogFile = layout.projectDirectory.file('src/main/resources/message-catalog/messages.ja.json')
+    outputDirectory = layout.buildDirectory.dir('generated/message-catalog')
+    buildRoot = layout.buildDirectory
+}
+sourceSets.main.java.srcDir(generateMessageConstants.flatMap { it.outputDirectory })
+tasks.named('compileJava') { dependsOn(generateMessageConstants) }
+
+tasks.register('testMessageConstantsGenerator') {
+    group = 'verification'
+    description = 'Checks message generation, escaping, stable output and invalid bindings.'
+    doLast {
+        def entry = { category, name, text -> [text: text, visibility: 'private', java: [category: category, name: name]] }
+        def catalog = [messages: ['test.first': entry('common', 'FIRST', '日本語 "quoted" \\ path\nnext\r\tline'),
+                                  'test.second': entry('vehicle', 'SECOND', '%s {value}')]]
+        Map<String, String> result = MessageConstantsRenderer.render(catalog)
+        String source = result['jp/xoki/web/zunda/smarthomewebserverbackend/common/constants/CommonMessageConstants.java']
+        assert source.contains('"日本語 \\"quoted\\" \\\\ path\\nnext\\r\\tline"')
+        assert result.size() == 2
+        assert result == MessageConstantsRenderer.render(catalog)
+        [
+                [messages: []],
+                [messages: ['test.first': [text: 1, visibility: 'private']]],
+                [messages: ['test.first': [text: 'text', visibility: 'unknown']]],
+                [messages: ['test.first': entry('../outside', 'NAME', 'text')]],
+                [messages: ['test.first': entry('common', 'bad-name', 'text')]],
+                [messages: ['test.first': entry('common', 'SAME', 'one'), 'test.second': entry('common', 'SAME', 'two')]]
+        ].each { invalid ->
+            boolean rejected = false
+            try { MessageConstantsRenderer.render(invalid) } catch (GradleException ignored) { rejected = true }
+            assert rejected
+        }
+    }
+}
+tasks.named('test') { dependsOn(tasks.named('testMessageConstantsGenerator')) }

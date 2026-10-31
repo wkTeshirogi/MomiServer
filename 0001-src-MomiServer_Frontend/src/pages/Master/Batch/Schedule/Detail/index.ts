@@ -1,0 +1,1 @@
+export { BatchScheduleDetail } from './page'

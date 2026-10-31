@@ -1,0 +1,111 @@
+{
+  "project": "momiServer",
+  "branch": null,
+  "pull_request": null,
+  "exported_at": "2026-10-25T23:03:51.807766+00:00",
+  "status": "ERROR",
+  "failed_count": 1,
+  "warning_count": 0,
+  "conditions": [
+    {
+      "kind": "quality_gate_condition",
+      "metric_key": "new_coverage",
+      "status": "OK",
+      "is_failure": false,
+      "requires_attention": false,
+      "actual_value": "87.8",
+      "comparator": "LT",
+      "error_threshold": "80",
+      "failure_when": {
+        "operator": "<",
+        "threshold": "80"
+      },
+      "required_when": {
+        "operator": ">=",
+        "threshold": "80"
+      }
+    },
+    {
+      "kind": "quality_gate_condition",
+      "metric_key": "new_duplicated_lines_density",
+      "status": "OK",
+      "is_failure": false,
+      "requires_attention": false,
+      "actual_value": "0.7331",
+      "comparator": "GT",
+      "error_threshold": "3",
+      "failure_when": {
+        "operator": ">",
+        "threshold": "3"
+      },
+      "required_when": {
+        "operator": "<=",
+        "threshold": "3"
+      }
+    },
+    {
+      "kind": "quality_gate_condition",
+      "metric_key": "new_security_hotspots_reviewed",
+      "status": "OK",
+      "is_failure": false,
+      "requires_attention": false,
+      "actual_value": "100.0",
+      "comparator": "LT",
+      "error_threshold": "100",
+      "failure_when": {
+        "operator": "<",
+        "threshold": "100"
+      },
+      "required_when": {
+        "operator": ">=",
+        "threshold": "100"
+      }
+    },
+    {
+      "kind": "quality_gate_condition",
+      "metric_key": "new_violations",
+      "status": "ERROR",
+      "is_failure": true,
+      "requires_attention": true,
+      "actual_value": "4",
+      "comparator": "GT",
+      "error_threshold": "0",
+      "failure_when": {
+        "operator": ">",
+        "threshold": "0"
+      },
+      "required_when": {
+        "operator": "<=",
+        "threshold": "0"
+      }
+    }
+  ],
+  "failed_conditions": [
+    {
+      "kind": "quality_gate_condition",
+      "metric_key": "new_violations",
+      "status": "ERROR",
+      "is_failure": true,
+      "requires_attention": true,
+      "actual_value": "4",
+      "comparator": "GT",
+      "error_threshold": "0",
+      "failure_when": {
+        "operator": ">",
+        "threshold": "0"
+      },
+      "required_when": {
+        "operator": "<=",
+        "threshold": "0"
+      }
+    }
+  ],
+  "warning_conditions": [],
+  "ignored_conditions": false,
+  "period": {
+    "mode": "PREVIOUS_VERSION",
+    "date": "2026-10-20T04:56:33+0000"
+  },
+  "cayc_status": "compliant",
+  "sonarqube_url": "http://sonar.zundamochi.local/dashboard?id=momiServer"
+}

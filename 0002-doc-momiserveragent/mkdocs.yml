@@ -1,0 +1,85 @@
+site_name: Momi Server Agent Docs
+site_description: Architecture and Design Documents
+site_url: https://xokikurumi.pages.zundamochi.local/0002-doc-momiserveragent
+
+use_directory_urls: true
+
+theme:
+  name: material
+  features: []
+
+markdown_extensions:
+  - admonition
+  - tables
+
+  - toc:
+      permalink: true
+
+  - pymdownx.details
+
+  - pymdownx.superfences:
+      custom_fences:
+
+        # Mermaid
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+        # PlantUML
+        - name: plantuml
+          class: plantuml
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - 00.ホーム:
+      - 00_ProjectOverview/000_index.md
+  - 01.要件定義:
+      - 01_RequirementsDefinition/000_index.md
+      - エージェント要件: 01_RequirementsDefinition/010_agent_requirements.md
+  - 02.システム設計:
+      - 02_SystemDesign/000_index.md
+      - エージェント基本設計: 02_SystemDesign/010_agent_basic_design.md
+      - 拡張設計: 02_SystemDesign/020_agent_extension_design.md
+      - 詳細設計:
+          - エージェント登録: 02_SystemDesign/Details/010_agent_registration.md
+          - 接続管理: 02_SystemDesign/Details/020_connection_management.md
+          - バッチ実行: 02_SystemDesign/Details/030_job_execution.md
+          - 実行制御: 02_SystemDesign/Details/040_execution_control.md
+          - ログ・結果通知: 02_SystemDesign/Details/050_log_result_notification.md
+          - 端末状態記録・送信: 02_SystemDesign/Details/060_resource_monitoring.md
+          - 自己更新: 02_SystemDesign/Details/070_self_update.md
+          - モバイル対応: 02_SystemDesign/Details/080_mobile_agent_support.md
+  - 03.インフラ設計:
+      - 03_InfrastructureDesign/000_index.md
+  - 04.DB設計:
+      - 04_DatabaseDesign/000_index.md
+  - 05.API設計:
+      - 05_API_Design/000_index.md
+  - 06.UI設計:
+      - 06_UserInterfaceDesign/0000_index.md
+  - 07.運用設計:
+      - 07_OperationsDesign/000_index.md
+  - 08.テスト設計:
+      - 08_TestDesign/000_index.md
+  - 09.開発ガイドライン:
+      - 09_DevelopmentGuidelines/000_index.md
+  - 10.ログ・監視設計:
+      - 10_LoggingAndMonitoringDesign/000_index.md
+  - 11.セキュリティ設計:
+      - 11_SecurityDesign/000_index.md
+  - 12.AI・ML:
+      - 12_AI_andMachineLearning/000_index.md
+  - 90.議事録:
+      - 90_MeetingMinutesAndNotes/000_index.md
+  - 99.変更履歴:
+      - 99_ChangeLog/000_index.md

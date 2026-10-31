@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Only this validated OCR launch boundary is excluded: executable names and
+         absolute paths are operator-owned, language is an anchored name list, and
+         the generated image is an absolute regular file. ProcessBuilder receives
+         separate argv entries, never a shell command. Keep PATH and the Tesseract
+         installation operator-owned. Argument-injection tests cover this boundary;
+         other process launches and other bug patterns remain analyzed. -->
+    <Match>
+        <Bug pattern="COMMAND_INJECTION"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.TesseractOcrEngine"/>
+        <Method name="startTesseract" params="java.nio.file.Path" returns="java.lang.Process"/>
+    </Match>
+    <!-- These constructor parameters are trusted, Spring-owned shared dependencies,
+         not caller-owned DTO data. Copying them would break transaction/configuration
+         sharing. Exclusions are limited to the exact constructor field and type.
+         DTOs, accessors, other fields and other bug patterns remain analyzed. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.common.config.GatewayRateLimiter"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="gatewayProperties" type="jp.xoki.web.zunda.smarthomewebserverbackend.common.config.GatewayProperties"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.batch.repository.BatchDefinitionParameterRepository"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="dsl" type="org.jooq.DSLContext"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.batch.repository.BatchDefinitionRepository"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="dsl" type="org.jooq.DSLContext"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.batch.repository.BatchExecutionHistoryRepository"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="dsl" type="org.jooq.DSLContext"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.batch.repository.BatchScheduleRepository"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="dsl" type="org.jooq.DSLContext"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.DocumentTextExtractionService"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="properties" type="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.DocumentExtractionProperties"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.TesseractOcrEngine"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="properties" type="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.DocumentExtractionProperties"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.status.websocket.StatusWebSocketHandler"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="sessions" type="jp.xoki.web.zunda.smarthomewebserverbackend.status.websocket.StatusWebSocketSessionRegistry"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportRepository"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="dsl" type="org.jooq.DSLContext"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportRequestSizeFilter"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="properties" type="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportProperties"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportService"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="extractionService" type="jp.xoki.web.zunda.smarthomewebserverbackend.common.document.DocumentTextExtractionService"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportService"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="properties" type="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportProperties"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportService"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="repository" type="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportRepository"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportService"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="storage" type="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportStorage"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportStorage"/>
+        <Method name="&lt;init&gt;"/>
+        <Field name="properties" type="jp.xoki.web.zunda.smarthomewebserverbackend.vehicle.imports.VehicleImportProperties"/>
+    </Match>
+</FindBugsFilter>

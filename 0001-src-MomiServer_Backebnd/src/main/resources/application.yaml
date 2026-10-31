@@ -1,0 +1,513 @@
+# 共通設定。${環境変数名:既定値}は、環境変数が未設定の場合に右側の値を使用する。
+# ここにあるパスは、特記がない限りバックエンドを動かすホスト／コンテナ内のパス。
+# 秘密値はソースへ直接記載せず、起動環境の環境変数やSecret管理から渡す。
+# .envの自動読込み設定はないため、使用する場合は起動ツール側で環境変数へ反映する。
+# コメント内の既定値はこのファイルの値。環境変数やSpringの外部設定で上書きされる場合がある。
+spring:
+  application:
+    # ログやActuator等で使用するアプリケーション識別名。DB名やURLの接頭辞ではない。
+    name: SmartHomeWebServerBackend
+  
+  # ===================================================================
+  # SmartHomeWebServerBackend Configuration
+  # ===================================================================
+  # この設定ファイルは Spring Boot アプリケーション全体の設定を管理します。
+  #
+  # 主な機能:
+  # - PostgreSQL 接続
+  # - jOOQ / JDBC（JPA関連キーは未使用の保持設定）
+  # - Flyway による DB マイグレーション
+  # - Spring Security
+  # - JWT 認証
+  # - MQTT による Agent 向けバッチ通知
+  # - Spring Batch
+  # - Spring Actuator
+  # - OpenAPI / Swagger UI
+  # - Discord 通知
+  #
+  # 推奨:
+  # - 本番環境の機密情報は環境変数またはSecret管理から渡す
+  # - 環境別ファイルを追加する場合は application-dev.yml / application-prod.yml 等で分離する
+  # ===================================================================
+
+  # ---------------------------------------------------------------
+  # デフォルトで使用する Spring Profile
+  # 開発環境: dev
+  # 本番環境: prod
+  # テスト環境: test
+  # ---------------------------------------------------------------
+  profiles:
+    # 既定はdev。環境別applicationファイルは現状未配置。SPRING_PROFILES_ACTIVEで上書きできる。
+    active: dev
+
+  # ---------------------------------------------------------------
+  # データベース接続設定 (PostgreSQL)
+  # ---------------------------------------------------------------
+  datasource:
+    # 接続URL
+    # 例:
+    # jdbc:postgresql://localhost:5432/zunda
+    # localhostはBEから見た接続先。DBが別コンテナ／別ホストにある場合はDB_HOSTを指定する。
+    # GradleのFlyway／jOOQ生成用接続には別の設定経路もあるため、build.gradleの環境変数も確認する。
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:zunda}
+
+    # DBユーザー名
+    username: ${DB_USERNAME:zunda_user}
+
+    # DBパスワード。既定値はローカル開発用であり、本番・共有環境では必ず上書きする。
+    password: ${DB_PASSWORD:zunda_pass}
+
+    # PostgreSQL JDBC Driver
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # timestamp without time zoneとCURRENT_TIMESTAMPの前提を共通Clockに揃える。
+      connection-init-sql: SET TIME ZONE 'Asia/Tokyo'
+
+  # ---------------------------------------------------------------
+  # JPA / Hibernate 設定
+  # ---------------------------------------------------------------
+  jpa:
+    # 現行のDBアクセスはjOOQ/JDBCで、JPA Starterは未導入。以下はJPA導入時向けの保持設定。
+    # この設定だけではjOOQのクエリの検証・整形・ログ出力は制御されない。
+    # View 層で Lazy Loading を防ぐ
+    # API サーバーでは false 推奨
+    open-in-view: false
+
+    hibernate:
+      # validate:
+      # エンティティとDBスキーマの整合性を検証
+      # update/create は本番で使用しない
+      ddl-auto: validate
+
+    # SQL をコンソール出力するか
+    show-sql: false
+
+    properties:
+      hibernate:
+        # SQL の整形
+        format_sql: true
+
+        jdbc:
+          # DB保存時のタイムゾーン
+          time_zone: Asia/Tokyo
+
+  # ---------------------------------------------------------------
+  # Flyway 設定
+  # DB マイグレーションを管理
+  # ---------------------------------------------------------------
+  flyway:
+    # Spring Boot起動時のマイグレーション。GradleのflywayMigrateOnlyとは実行経路が異なる。
+    enabled: true
+
+    # SQL配置場所
+    #    locations: classpath:db/migration
+
+    # 履歴テーブルがない既存DBをFlyway管理へ取り込む。既存スキーマの正しさを検証する設定ではない。
+    baseline-on-migrate: true
+
+    # 実行前の履歴・チェックサム検証を省略する。適用済みSQLを変更してよいという意味ではない。
+    # falseでもマイグレーションSQL自体の実行エラーは抑止されない。
+    validate-on-migrate: false
+
+  # ---------------------------------------------------------------
+  # Spring Batch 設定
+  # ---------------------------------------------------------------
+  batch:
+    jdbc:
+      # Spring Batchのメタデータ用テーブルを起動時に初期化する設定。
+      # m_batch_* / t_batch_execution_requestsの業務テーブル作成はFlywayが担当する。
+      initialize-schema: always
+
+    job:
+      # Spring Batch Jobの起動時自動実行。既定false。
+      # Spring @Scheduledによる実行要求の作成・配信を停止する設定ではない。
+      enabled: ${BATCH_JOB_ENABLED:false}
+
+  # ---------------------------------------------------------------
+  # Spring Security のデフォルトユーザー
+  # 自動構成用の値であり、ユーザーマスタへADMINを登録する設定ではない。
+  # ---------------------------------------------------------------
+  security:
+    user:
+      name: admin
+      password: ${ADMIN_PASSWORD:change-me}
+
+  # ---------------------------------------------------------------
+  # Jackson (JSON シリアライズ) 設定
+  # ---------------------------------------------------------------
+  jackson:
+    # 日付時刻のタイムゾーン
+    # LocalDateTime自体へzoneを付与するものではない。業務時刻の共通Clockも日本時間に揃える。
+    time-zone: Asia/Tokyo
+    # null 値の項目は JSON 出力しない
+    default-property-inclusion: non_null
+
+
+  # ---------------------------------------------------------------
+  # ファイルアップロード設定
+  # ---------------------------------------------------------------
+  servlet:
+    multipart:
+      # HTTP受付時の1ファイル上限（既定10240MB）。バッチ共通設定や車両取込の業務上限とは別。
+      max-file-size: ${BATCH_MULTIPART_MAX_FILE_SIZE:10240MB}
+
+      # 1リクエスト全体の上限。ファイル本体以外のmultipart境界・フォーム項目も含む。
+      max-request-size: ${BATCH_MULTIPART_MAX_REQUEST_SIZE:10241MB}
+
+      # 0は一時ディスクへ保存する設定。一時領域の書込み権限と空き容量を確保する。
+      file-size-threshold: 0
+
+  # ---------------------------------------------------------------
+  # WebSocket 設定
+  # ---------------------------------------------------------------
+  websocket:
+    # 保持設定。現行コードにこのキーの参照はない。
+    # 状態配信の送信時間・バッファ制限はStatusWebSocketSessionRegistryConstants等で別途管理する。
+    message-size-limit: 64KB
+
+# ===================================================================
+# Web サーバー設定
+# ===================================================================
+server:
+  # BEのHTTP待受ポート。既定8080。FE開発サーバーやDBのポートとは別。
+  port: ${SERVER_PORT:8080}
+  compression:
+    # 対応するHTTP応答を圧縮する。WebSocketやMQTTメッセージの圧縮設定ではない。
+    enabled: true
+# ===================================================================
+# Spring Actuator 設定
+# ===================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        # HTTPへ公開するActuatorエンドポイントの候補。実際の認証・認可はSecurityConfigにも従う。
+        # env・loggers等は運用情報を含むため、共有環境では公開対象と接続経路を確認する。
+        include: health,info,metrics,prometheus,env,loggers
+
+  endpoint:
+    health:
+      # ヘルス詳細は認可された要求にのみ表示する。HTTPエンドポイント自体の公開条件とは別。
+      show-details: when-authorized
+
+  info:
+    env:
+      # 環境プロパティのinfo.*項目を/infoの情報源に含める。全環境変数を列挙する設定ではない。
+      enabled: true
+
+# ===================================================================
+# ログ設定
+# ===================================================================
+logging:
+  level:
+    # 個別指定のないロガーの基準レベル。
+    root: INFO
+
+    # アプリケーション独自パッケージ。DEBUGは調査用に詳細化するため、共有環境では出力量・内容を確認する。
+    jp.xoki.web.zunda: DEBUG
+
+    # Spring Security
+    org.springframework.security: DEBUG
+
+    # Hibernate SQL
+    org.hibernate.SQL: WARN
+
+    # Flyway
+    org.flywaydb: DEBUG
+
+# ===================================================================
+# OpenAPI / Swagger UI
+# ===================================================================
+springdoc:
+  # 仕様JSON・UIの認証要否はgateway.openapi.public-enabled側で制御する。
+  api-docs:
+    # OpenAPI JSON
+    path: /v3/api-docs
+
+  swagger-ui:
+    # Swagger UI
+    path: /swagger-ui.html
+
+    # HTTP メソッド順でソート
+    operations-sorter: method
+
+    # タグ名アルファベット順
+    tags-sorter: alpha
+
+    # 実行時間を表示
+    display-request-duration: true
+
+# ===================================================================
+# JWT 設定
+# ===================================================================
+jwt:
+  # 署名用秘密鍵
+  # 本番環境では必ず環境変数で設定
+  secret: ${JWT_SECRET:please-change-this-secret-key-to-a-very-long-random-string}
+
+  # トークン発行者の保持設定。現行JwtServiceはこのキーを参照しておらず、変更だけではiss検証は有効にならない。
+  issuer: SmartHomeWebServerBackend
+
+  expiration:
+    # 管理画面ユーザー用Access Tokenの有効期限（秒）。86400秒は1日。Agent用期限とは別。
+    access-token: 86400
+
+    # 管理画面ユーザー用Refresh Tokenの有効期限（秒）。現在はAccess Tokenと同じ1日。
+    refresh-token: 86400
+
+# ===================================================================
+# Gateway settings
+# ===================================================================
+gateway:
+  # Gatewayフィルタの有効化。ユーザーJWT・Agent Bearer・外部在庫API認証の一括停止設定ではない。
+  enabled: ${GATEWAY_ENABLED:true}
+
+  # GatewayPropertiesが保持する既定バージョン値。現行の対応バージョン判定にこの値の参照はない。
+  default-api-version: ${GATEWAY_DEFAULT_API_VERSION:v1}
+
+  api-key:
+    # IoT用APIキー検証。ADMINがDBで発行する外部在庫APIキーやAgent認証の設定とは分ける。
+    enabled: ${GATEWAY_API_KEY_ENABLED:true}
+
+    # IoT用APIキーを受け取るHTTPヘッダー名。
+    header-name: ${GATEWAY_API_KEY_HEADER_NAME:X-API-Key}
+
+    # IoT用の許可キー一覧（カンマ区切り）。秘密値なのでログや例示用の実値をソースへ残さない。
+    iot-keys: ${GATEWAY_IOT_API_KEYS:}
+
+  rate-limit:
+    # Gateway対象のレート制限。Agent認証APIの上限はapp.agent-authで別に設定する。
+    enabled: ${GATEWAY_RATE_LIMIT_ENABLED:false}
+
+    # 1分間の許可回数。既定60。外部在庫APIキーの時間単位の利用制限とは別。
+    per-minute: ${GATEWAY_RATE_LIMIT_PER_MINUTE:60}
+
+  openapi:
+    # trueは仕様JSON・Swagger UIを未認証でも参照可能にする。falseの場合はADMINを要求する。
+    public-enabled: ${GATEWAY_OPENAPI_PUBLIC_ENABLED:true}
+
+# ===================================================================
+# MQTT 設定
+# ===================================================================
+mqtt:
+  # バッチ通知送信側のON/OFF。実送信にはapp.agent-mqtt側の構成準備も必要で、この値だけでは有効にならない。
+  enabled: true
+
+  # MQTT Broker URL
+  # ローカル:
+  # tcp://localhost:1883
+  broker-url: ${MQTT_BROKER_URL:tcp://localhost:1883}
+
+  # 送信クライアントIDの基底値。バッチ配信接続では末尾に-batch-command-publisherを付加する。
+  client-id: ${MQTT_CLIENT_ID:smarthome-backend}
+
+  # バッチ通知を送るBEクライアントの認証情報。Agentへ配布する個別資格情報とは別。
+  username: ${MQTT_USERNAME:}
+  password: ${MQTT_PASSWORD:}
+
+  # 旧トピックの保持設定。現行コードは以下3キーを参照していない。
+  # 実際のAgent通知先はAgentMqttProvisioningが登録世代等を用いて生成する。
+  topics:
+    telemetry: home/+/telemetry
+    status: home/+/status
+    batch-command: smarthome/agents/{agentId}/batch/command
+
+  # 送信QoS。1は重複配送があり得るため、Agent側は実行IDとジャーナルで二重実行を防ぐ。
+  qos: 1
+
+  # 接続タイムアウト (秒)
+  connection-timeout: 30
+
+  # Keep Alive (秒)
+  keep-alive-interval: 60
+
+  # MQTTライブラリの自動再接続。バッチ実行そのものの自動再実行を許可する値ではない。
+  automatic-reconnect: true
+
+# ===================================================================
+# 通知設定
+# ===================================================================
+notification:
+  # 通知全体設定のDBレコードがない場合の初期値。
+  # DBへ保存済みの場合は共通設定画面の値が優先され、環境変数変更だけでは保存済み設定を上書きしない。
+  discord:
+
+    # Discord通知全体の有効 / 無効
+    enabled: ${DISCORD_NOTIFICATION_ENABLED:false}
+
+    # Discord Webhook URL
+    # Bot Tokenは使用せず、Webhookによる一方向通知を初期方針とする
+    webhook-url: ${DISCORD_WEBHOOK_URL:}
+
+    # 不正アクセス監査イベント向けDiscord通知
+    security-events:
+
+      # 不正アクセス監査イベント通知の有効 / 無効
+      enabled: ${SECURITY_EVENT_DISCORD_NOTIFICATION_ENABLED:false}
+
+      # Discord通知対象とする最低重要度
+      # info / warning / critical
+      minimum-severity: ${SECURITY_EVENT_DISCORD_MINIMUM_SEVERITY:warning}
+
+      # 同種イベントを集約通知する時間窓（秒）。既定300秒＝5分。HTTP接続タイムアウトではない。
+      aggregation-window-seconds: ${SECURITY_EVENT_DISCORD_AGGREGATION_WINDOW_SECONDS:300}
+
+# ===================================================================
+# アプリケーション固有設定
+# ===================================================================
+app:
+  # セキュリティ共通設定はファイル管理のみ。認証状態はDBに保持し、再起動でロックを解除しない。
+  security:
+    login-failure-tolerance: 5
+    login-lock-minutes: 15
+    external-inventory-hourly-limit: 1000
+
+  # 以下のCronは秒・分・時・日・月・曜日の6フィールド。各スケジューラはAsia/Tokyoで評価する。
+  vehicle-inspection-notification:
+    # 日次の車検期限判定スケジューラ。保存直後の判定は別経路で行う。
+    enabled: ${VEHICLE_INSPECTION_NOTIFICATION_ENABLED:true}
+
+    # 既定は毎日09:00。通知時期・配信先は既存の業務設定・通知ルート側で決定する。
+    cron: ${VEHICLE_INSPECTION_NOTIFICATION_CRON:0 0 9 * * *}
+
+  vehicle-import:
+    # PDF／画像原本の一時保存先。java.io.tmpdir配下が既定で、書込み権限と個人情報保護が必要。
+    root: ${VEHICLE_IMPORT_ROOT:${java.io.tmpdir}/smarthome-vehicle-imports}
+
+    # 車両取込1ファイルの業務上限（バイト）。既定10485760＝10MiB。multipart上限とは別に検証する。
+    max-bytes: ${VEHICLE_IMPORT_MAX_BYTES:10485760}
+
+    # 入力画像の総画素数上限。幅×高さで判定し、巨大画像の展開によるメモリ消費を抑える。
+    max-image-pixels: ${VEHICLE_IMPORT_MAX_IMAGE_PIXELS:40000000}
+
+    # 取り込めるPDFの最大ページ数。
+    max-pdf-pages: ${VEHICLE_IMPORT_MAX_PDF_PAGES:10}
+
+    # 確認待ち取込の有効期間。ISO-8601 Duration形式で、PT24Hは24時間。
+    review-lifetime: ${VEHICLE_IMPORT_REVIEW_LIFETIME:PT24H}
+
+    # 既定は毎時15分。期限切れ・登録済み・取消済み原本や孤立ファイルの削除を再試行する。
+    cleanup-cron: ${VEHICLE_IMPORT_CLEANUP_CRON:0 15 * * * *}
+
+  document-extraction:
+    # 標準tesseractコマンド、またはTesseract実行ファイルの絶対パス。シェル・独自ラッパーは指定しない。
+    tesseract-command: ${TESSERACT_COMMAND:tesseract}
+
+    # OCR言語。jpn+engは日本語＋英語で、実行環境に対応する学習データが必要。
+    language: ${TESSERACT_LANGUAGE:jpn+eng}
+
+    # OCR呼出し1回の待機上限（Duration）。PT30Sは30秒。
+    timeout: ${TESSERACT_TIMEOUT:PT30S}
+
+    # PDFテキスト抽出・画像化・複数回のOCRを含む文書全体の待機上限。PT330Sは330秒。
+    document-timeout: ${DOCUMENT_EXTRACTION_TIMEOUT:PT330S}
+
+    # OCR用PDF画像化の解像度（dpi）。値を上げると画像サイズ・処理時間・メモリ消費が増える。
+    rendered-dpi: ${TESSERACT_RENDERED_DPI:300}
+
+    # PDFの画像化後の1ページあたり総画素数上限。入力画像のmax-image-pixelsとは別。
+    max-rendered-pixels: ${DOCUMENT_MAX_RENDERED_PIXELS:40000000}
+
+    # 文書全体の抽出文字列長の上限。DB項目の文字数上限やアップロード容量ではない。
+    max-extracted-characters: ${DOCUMENT_MAX_EXTRACTED_CHARACTERS:500000}
+
+  api-access-log:
+    # APIアクセス履歴のDB記録。logging.levelによるアプリログ出力とは別の機能。
+    enabled: ${API_ACCESS_LOG_ENABLED:true}
+
+    # DB履歴の保持日数。既定30日。
+    retention-days: ${API_ACCESS_LOG_RETENTION_DAYS:30}
+
+    # 期限切れ履歴の清掃。既定は毎日02:15。
+    cleanup-cron: ${API_ACCESS_LOG_CLEANUP_CRON:0 15 2 * * *}
+
+  status:
+    websocket:
+      # マシン／サービス状態スナップショットの配信間隔（ミリ秒）。5000msは5秒。
+      broadcast-interval-ms: ${STATUS_WEBSOCKET_BROADCAST_INTERVAL_MS:5000}
+
+      # 一回限りの接続チケットの有効期間（秒）。確立済みWebSocket接続の寿命ではない。
+      ticket-ttl-seconds: ${STATUS_WEBSOCKET_TICKET_TTL_SECONDS:30}
+
+  batch:
+    file-storage:
+      # バッチ添付の永続保存先。既存の絶対パスを指定し、シンボリックリンクを含めない。
+      # 空欄では添付の保存・読出し不可。一時アップロード領域やAgent端末の作業先とは別。
+      root-directory: ${BATCH_FILE_STORAGE_ROOT:}
+
+    # 単一BEの保守停止状態を再起動後も維持する。web_appが書込可能な永続領域を指定する。
+    # 自動清掃・デプロイ時削除の対象外とし、ADMINの保守APIで停止・再開する。外部から直接編集しない。
+    maintenance-marker: ${BATCH_MAINTENANCE_MARKER:./data/batch-maintenance.flag}
+
+  agent-auth:
+    # 独立した32バイト乱数をBase64で設定。未設定時は登録・更新を503で拒否する。
+    # JWT署名鍵とは分ける。変更時は保存済みの復旧応答を復号できなくなる点に注意する。
+    response-encryption-key: ${AGENT_RESPONSE_ENCRYPTION_KEY:}
+
+    # Agent用Access Tokenの有効期間（分）。管理画面ユーザー用JWT設定とは独立。
+    access-minutes: ${AGENT_ACCESS_MINUTES:15}
+
+    # Agent用Refresh Tokenの有効期間（日）。
+    refresh-days: ${AGENT_REFRESH_DAYS:30}
+
+    # 管理画面で発行するAgent登録コードの有効期間（分）。
+    registration-minutes: ${AGENT_REGISTRATION_MINUTES:30}
+
+    # 同一登録要求の応答を復旧できる期間（時間）。トークン自体の有効期間とは別。
+    recovery-hours: ${AGENT_REGISTRATION_RECOVERY_HOURS:24}
+
+    # 同一更新要求の応答を復旧できる期間（分）。通信失敗を理由に要求IDを作り直さない。
+    refresh-recovery-minutes: ${AGENT_REFRESH_RECOVERY_MINUTES:5}
+
+    # Agent登録・認証系要求の1分間上限。Gateway対象のレート制限とは独立。
+    requests-per-minute: ${AGENT_AUTH_REQUESTS_PER_MINUTE:60}
+
+  agent-mqtt:
+    # Agent専用ユーザー・ACLを構成する連携。既定falseで、構成準備完了まではバッチ通知を送らない。
+    enabled: ${AGENT_MQTT_ENABLED:false}
+
+    # BEがMosquitto Dynamic Securityの制御へ接続するURL。Agentへ返す接続先とは別。
+    broker-url: ${AGENT_MQTT_CONTROL_URL:ssl://localhost:8883}
+
+    # Agent端末へ配布するブローカーURL。Agentから到達でき、証明書と整合するホスト名を指定する。
+    agent-broker-url: ${AGENT_MQTT_BROKER_URL:ssl://localhost:8883}
+
+    # BE専用の制御資格情報。Agentへ配布する個別ユーザー・パスワードとして流用しない。
+    username: ${AGENT_MQTT_CONTROL_USERNAME:}
+    password: ${AGENT_MQTT_CONTROL_PASSWORD:}
+
+    # 制御用MQTT接続の識別子。同一ブローカー上の他クライアントと重複させない。
+    client-id: ${AGENT_MQTT_CONTROL_CLIENT_ID:momiserver-dynsec}
+
+    # 開発用ループバック接続だけに平文MQTTを許可する例外。LAN接続全般のTLS検証無効化ではない。
+    allow-insecure-localhost: ${AGENT_MQTT_ALLOW_INSECURE_LOCALHOST:false}
+
+  agent-runtime:
+    # Agentへ返す既定作業先。BE側ではなくAgent端末内のパス。実行別作業領域が指定される場合は別途優先される。
+    working-directory: ${AGENT_WORKING_DIRECTORY:}
+  cors:
+    # フロントエンドの許可オリジン
+    # カンマ区切りで複数指定可能
+    # 例: APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,https://example.com
+    # スキーム・ホスト・ポートまでのオリジンを列挙し、パスやワイルドカードは指定しない。API認可の代わりではない。
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+  telemetry:
+    # 未使用の保持設定。現行コードに参照はなく、この値だけでセンサーデータの自動削除は動作しない。
+    # 想定単位は日。
+    retention-days: 365
+
+  thresholds:
+    # 未使用の閾値定義。現行コードに参照はなく、この値だけで監視・通知処理は有効にならない。
+    # 温度しきい値（想定単位: ℃）。
+    temperature:
+      warning: 30.0
+      critical: 35.0
+
+    # 湿度しきい値（想定単位: %）。
+    humidity:
+      warning: 70.0
+      critical: 80.0
+
+# 保持されている識別値。現行アプリコードに参照はなく、Kubernetesリソース等を生成する設定ではない。
+kind: Application

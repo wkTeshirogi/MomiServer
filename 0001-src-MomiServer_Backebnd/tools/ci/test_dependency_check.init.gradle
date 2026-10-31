@@ -1,0 +1,29 @@
+// Offline regression test for the task-local cache defaults in plugin 13.0.0.
+allprojects {
+    afterEvaluate {
+        tasks.register('testDependencyCheckConfiguration') {
+            doLast {
+                def configured = dependencyCheck.data.directory
+                def original = configured.get()
+                def expected = layout.projectDirectory.dir('.dependency-check').asFile.canonicalPath
+                def taskNames = ['dependencyCheckAnalyze', 'dependencyCheckAggregate',
+                                 'dependencyCheckUpdate', 'dependencyCheckPurge']
+                assert new File(original).canonicalPath == expected
+                taskNames.each { taskName ->
+                    assert tasks.named(taskName).get().data.directory.get() == original : taskName
+                }
+                try {
+                    def alternate = layout.buildDirectory.dir('nvd-cache-regression').get().asFile.absolutePath
+                    configured.set(alternate)
+                    taskNames.each { taskName ->
+                        assert tasks.named(taskName).get().data.directory.get() == alternate : taskName
+                    }
+                } finally {
+                    configured.set(original)
+                }
+                assert tasks.named('dependencyCheckAnalyze').get().failOnError.get()
+                println 'Dependency-Check configuration: four cache bindings and provider updates passed; tool errors remain fatal.'
+            }
+        }
+    }
+}

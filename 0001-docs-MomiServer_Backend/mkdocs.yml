@@ -1,0 +1,46 @@
+site_name: Momi Server ドキュメント
+site_description: Momi Server の要件定義・設計ドキュメント
+site_url: https://xokikurumi.pages.zundamochi.local/0001-docs-smarthomewebserverbackend
+
+use_directory_urls: true
+
+theme:
+  name: material
+  language: ja
+  features: []
+
+markdown_extensions:
+  - admonition
+  - tables
+
+  - toc:
+      permalink: true
+
+  - pymdownx.details
+
+  - pymdownx.superfences:
+      custom_fences:
+
+        # Mermaid
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+        # PlantUML
+        - name: plantuml
+          class: plantuml
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search:
+      lang: ja
+
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+extra_css:
+  - stylesheets/extra.css
+
+# nav は明示定義せず、docs 配下の Markdown を MkDocs の自動ナビゲーションで表示する。
+# これにより、週次で追加される設計書やテンプレートが未掲載のまま残ることを防ぐ。

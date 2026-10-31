@@ -1,0 +1,1 @@
+export { ItemMasterDetail } from './page'

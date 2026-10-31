@@ -1,0 +1,15 @@
+services:
+  mosquitto:
+    image: docker.io/library/eclipse-mosquitto:2.0
+    container_name: momi-mosquitto
+    network_mode: host
+    volumes:
+      - momi-mosquitto-config:/mosquitto/config
+      - momi-mosquitto-data:/mosquitto/data
+    restart: unless-stopped
+
+volumes:
+  momi-mosquitto-config:
+    name: momi-mosquitto-config
+  momi-mosquitto-data:
+    name: momi-mosquitto-data

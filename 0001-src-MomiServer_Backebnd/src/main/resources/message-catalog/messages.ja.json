@@ -1,0 +1,2043 @@
+{
+  "locale": "ja",
+  "messages": {
+    "message.auth.loginLockTitle": {
+      "text": "ログインを一時ロックしました",
+      "visibility": "private",
+      "java": { "category": "auth", "name": "LOGIN_LOCK_TITLE" }
+    },
+    "message.auth.loginLockMessage": {
+      "text": "ユーザーID %s の連続ログイン失敗により、%s までログインを拒否します。",
+      "visibility": "private",
+      "java": { "category": "auth", "name": "LOGIN_LOCK_MESSAGE" }
+    },
+    "inventory.low.title": {
+      "text": "在庫が少なくなっています",
+      "visibility": "public"
+    },
+    "inventory.low.message": {
+      "text": "在庫品目ID {itemId} の現在数量は {quantity} です。",
+      "visibility": "public"
+    },
+    "inventory.outOfStock.title": {
+      "text": "在庫切れが発生しました",
+      "visibility": "public"
+    },
+    "inventory.outOfStock.message": {
+      "text": "在庫品目ID {itemId} の現在数量は {quantity} です。",
+      "visibility": "public"
+    },
+    "validation.form.checkInput": {
+      "text": "入力内容を確認してください。",
+      "visibility": "public"
+    },
+    "validation.inventory.itemRequired": {
+      "text": "品目は必須です。",
+      "visibility": "public"
+    },
+    "validation.inventory.storageLocationRequired": {
+      "text": "保管場所は必須です。",
+      "visibility": "public"
+    },
+    "validation.inventory.quantityMin": {
+      "text": "現在数量は0以上で入力してください。",
+      "visibility": "public"
+    },
+    "validation.inventory.replenishQuantityMin": {
+      "text": "補充時の推奨数量は0以上で入力してください。",
+      "visibility": "public"
+    },
+    "validation.inventory.statusRequired": {
+      "text": "在庫ステータスは必須です。",
+      "visibility": "public"
+    },
+    "error.inventory.invalidId": {
+      "text": "在庫IDが正しくありません。",
+      "visibility": "public"
+    },
+    "error.inventory.notFound": {
+      "text": "在庫情報が見つかりません。",
+      "visibility": "public"
+    },
+    "error.inventory.fetchDetailFailed": {
+      "text": "在庫詳細の取得に失敗しました。",
+      "visibility": "public"
+    },
+    "message.agent.authConfigurationInvalid": {
+      "text": "Agent認証設定を確認してください。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "AUTH_CONFIGURATION_INVALID"
+      }
+    },
+    "message.agent.authKeyMissing": {
+      "text": "Agent認証の専用鍵が未設定です。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "AUTH_KEY_MISSING"
+      }
+    },
+    "message.agent.authenticationFailed": {
+      "text": "登録情報または認証情報が無効です。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "AUTHENTICATION_FAILED"
+      }
+    },
+    "message.agent.credentialsRequired": {
+      "text": "Agent専用の認証情報が必要です。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "CREDENTIALS_REQUIRED"
+      }
+    },
+    "message.agent.deviceDisabled": {
+      "text": "無効な端末には登録コードを発行できません。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "DEVICE_DISABLED"
+      }
+    },
+    "message.agent.deviceNotFound": {
+      "text": "端末が見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "DEVICE_NOT_FOUND"
+      }
+    },
+    "message.agent.executionNotFound": {
+      "text": "対象の実行要求が見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "EXECUTION_NOT_FOUND"
+      }
+    },
+    "message.agent.notFound": {
+      "text": "Agentが見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "NOT_FOUND"
+      }
+    },
+    "message.agent.rateLimited": {
+      "text": "時間を空けて再試行してください。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "RATE_LIMITED"
+      }
+    },
+    "message.agent.recoveryRequiresReregistration": {
+      "text": "再登録が必要です。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "RECOVERY_REQUIRES_REREGISTRATION"
+      }
+    },
+    "message.agent.recoveryUnavailable": {
+      "text": "登録済みです。必要なら管理画面から再登録してください。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "RECOVERY_UNAVAILABLE"
+      }
+    },
+    "message.agent.reregistrationRequired": {
+      "text": "先に再登録を開始してください。",
+      "visibility": "private",
+      "java": {
+        "category": "agent",
+        "name": "REREGISTRATION_REQUIRED"
+      }
+    },
+    "message.auth.registrationPasswordRequired": {
+      "text": "新規登録時はパスワードが必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "REGISTRATION_PASSWORD_REQUIRED"
+      }
+    },
+    "message.batch.attachmentCountExceeded": {
+      "text": "添付数の上限です。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_COUNT_EXCEEDED"
+      }
+    },
+    "message.batch.attachmentLimitExceeded": {
+      "text": "添付上限を超過しています。先に添付を解除してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_LIMIT_EXCEEDED"
+      }
+    },
+    "message.batch.attachmentPathDuplicate": {
+      "text": "配置先が既存ファイルと重複しています。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_PATH_DUPLICATE"
+      }
+    },
+    "message.batch.attachmentPathInvalid": {
+      "text": "配置先は500文字以内の相対パスで指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_PATH_INVALID"
+      }
+    },
+    "message.batch.attachmentPathNameInvalid": {
+      "text": "配置先に使用できない名前が含まれています。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_PATH_NAME_INVALID"
+      }
+    },
+    "message.batch.attachmentReplacementConflict": {
+      "text": "差し替え対象が変更されています。再読み込みしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_REPLACEMENT_CONFLICT"
+      }
+    },
+    "message.batch.attachmentSizeExceeded": {
+      "text": "添付サイズの上限を超えています。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_SIZE_EXCEEDED"
+      }
+    },
+    "message.batch.attachmentStatusInvalid": {
+      "text": "指定できる状態はdeletedです。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_STATUS_INVALID"
+      }
+    },
+    "message.batch.attachmentStorageMissing": {
+      "text": "添付保存先をバックエンドに設定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_STORAGE_MISSING"
+      }
+    },
+    "message.batch.attachmentTypeInvalid": {
+      "text": "ファイル種別が不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_TYPE_INVALID"
+      }
+    },
+    "message.batch.attachmentUploadConflict": {
+      "text": "同じアップロード要求IDの内容が一致しません。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "ATTACHMENT_UPLOAD_CONFLICT"
+      }
+    },
+    "message.batch.definitionNotFound": {
+      "text": "バッチ定義が見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "DEFINITION_NOT_FOUND"
+      }
+    },
+    "message.batch.definitionUpdateConflict": {
+      "text": "バッチ定義は他の操作で更新されています。最新データを再取得してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "DEFINITION_UPDATE_CONFLICT"
+      }
+    },
+    "message.batch.executionAttachmentMismatch": {
+      "text": "対象実行の添付ではありません。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "EXECUTION_ATTACHMENT_MISMATCH"
+      }
+    },
+    "message.batch.executionLogQueryInvalid": {
+      "text": "実行ログの検索条件が不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "EXECUTION_LOG_QUERY_INVALID"
+      }
+    },
+    "message.batch.executionWarningMessage": {
+      "text": "実行ID: %s / 定義ID: %s / エージェントID: %s。期限超過による自動再実行は行いません。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "EXECUTION_WARNING_MESSAGE"
+      }
+    },
+    "message.batch.resultUnconfirmedTitle": {
+      "text": "バッチの実行結果を確認できません",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "RESULT_UNCONFIRMED_TITLE"
+      }
+    },
+    "message.batch.schedulePeriodInvalid": {
+      "text": "表示期間は開始日から31日以内で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "SCHEDULE_PERIOD_INVALID"
+      }
+    },
+    "message.batch.snapshotLimitExceeded": {
+      "text": "添付上限を超過しています。定義の添付を解除してから実行してください。",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "SNAPSHOT_LIMIT_EXCEEDED"
+      }
+    },
+    "message.batch.startOverdueTitle": {
+      "text": "バッチの開始待ち期限を超過しました",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "START_OVERDUE_TITLE"
+      }
+    },
+    "message.batch.startUnconfirmedTitle": {
+      "text": "バッチの実行開始を確認できません",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "START_UNCONFIRMED_TITLE"
+      }
+    },
+    "message.batch.stopUnconfirmedTitle": {
+      "text": "バッチの停止を確認できません",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "STOP_UNCONFIRMED_TITLE"
+      }
+    },
+    "message.common.accessDenied": {
+      "text": "この操作を行う権限がありません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ACCESS_DENIED"
+      }
+    },
+    "message.common.apiAccessLogResource": {
+      "text": "APIアクセスログ",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "API_ACCESS_LOG_RESOURCE"
+      }
+    },
+    "message.common.authenticationFailed": {
+      "text": "メールアドレスまたはパスワードが正しくありません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "AUTHENTICATION_FAILED"
+      }
+    },
+    "message.common.authenticationRequired": {
+      "text": "認証が必要です。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "AUTHENTICATION_REQUIRED"
+      }
+    },
+    "message.common.databaseError": {
+      "text": "データの処理中にエラーが発生しました。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DATABASE_ERROR"
+      }
+    },
+    "message.common.documentExtractionFailed": {
+      "text": "文書を解析できませんでした。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DOCUMENT_EXTRACTION_FAILED"
+      }
+    },
+    "message.common.documentExtractionInterrupted": {
+      "text": "文書解析が中断されました。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DOCUMENT_EXTRACTION_INTERRUPTED"
+      }
+    },
+    "message.common.documentExtractionTimeout": {
+      "text": "文書解析が制限時間内に完了しませんでした。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DOCUMENT_EXTRACTION_TIMEOUT"
+      }
+    },
+    "message.common.documentTextLimitExceeded": {
+      "text": "抽出文字数が上限を超えています。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DOCUMENT_TEXT_LIMIT_EXCEEDED"
+      }
+    },
+    "message.common.duplicateEmail": {
+      "text": "既に登録されているメールアドレスです: %s",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "DUPLICATE_EMAIL"
+      }
+    },
+    "message.common.fieldInvalid": {
+      "text": "%sが不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "FIELD_INVALID"
+      }
+    },
+    "message.common.httpMethodLabel": {
+      "text": "HTTPメソッド",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "HTTP_METHOD_LABEL"
+      }
+    },
+    "message.common.httpStatusInvalid": {
+      "text": "HTTPステータスは100から599で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "HTTP_STATUS_INVALID"
+      }
+    },
+    "message.common.inputInvalid": {
+      "text": "入力内容に誤りがあります。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "INPUT_INVALID"
+      }
+    },
+    "message.common.logLimitInvalid": {
+      "text": "limitは1から200で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "LOG_LIMIT_INVALID"
+      }
+    },
+    "message.common.logPeriodExceeded": {
+      "text": "検索期間は31日以内で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "LOG_PERIOD_EXCEEDED"
+      }
+    },
+    "message.common.logPeriodReversed": {
+      "text": "開始日時は終了日時以前を指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "LOG_PERIOD_REVERSED"
+      }
+    },
+    "message.common.minimumDurationInvalid": {
+      "text": "最小処理時間は0以上で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "MINIMUM_DURATION_INVALID"
+      }
+    },
+    "message.common.notificationRouteResource": {
+      "text": "通知ルート設定",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "NOTIFICATION_ROUTE_RESOURCE"
+      }
+    },
+    "message.common.ocrCommandInvalid": {
+      "text": "Tesseractは標準コマンド名または実行ファイルの絶対パスで設定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_COMMAND_INVALID"
+      }
+    },
+    "message.common.ocrCommandMissing": {
+      "text": "Tesseractの実行ファイルを設定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_COMMAND_MISSING"
+      }
+    },
+    "message.common.ocrFailed": {
+      "text": "OCRに失敗しました。Tesseractの設定を確認するか手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_FAILED"
+      }
+    },
+    "message.common.ocrImageMissing": {
+      "text": "OCRの入力画像が見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_IMAGE_MISSING"
+      }
+    },
+    "message.common.ocrInterrupted": {
+      "text": "OCRが中断されました。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_INTERRUPTED"
+      }
+    },
+    "message.common.ocrLanguageInvalid": {
+      "text": "OCRの言語はjpn+engなどの言語名で設定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_LANGUAGE_INVALID"
+      }
+    },
+    "message.common.ocrResultUnavailable": {
+      "text": "OCR結果を取得できませんでした。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_RESULT_UNAVAILABLE"
+      }
+    },
+    "message.common.ocrTimeout": {
+      "text": "OCRが制限時間内に完了しませんでした。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_TIMEOUT"
+      }
+    },
+    "message.common.ocrUnavailable": {
+      "text": "OCRを実行できません。Tesseractと日本語言語データの設定を確認してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OCR_UNAVAILABLE"
+      }
+    },
+    "message.common.offsetInvalid": {
+      "text": "offsetは0以上で指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "OFFSET_INVALID"
+      }
+    },
+    "message.common.pdfEncrypted": {
+      "text": "暗号化されたPDFは取り込めません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_ENCRYPTED"
+      }
+    },
+    "message.common.pdfExtractionFailed": {
+      "text": "PDFを解析できませんでした。破損していないか確認してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_EXTRACTION_FAILED"
+      }
+    },
+    "message.common.pdfExtractionInterrupted": {
+      "text": "文書解析が中断されました。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_EXTRACTION_INTERRUPTED"
+      }
+    },
+    "message.common.pdfImageLimitExceeded": {
+      "text": "PDFページの画像サイズが上限を超えています。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_IMAGE_LIMIT_EXCEEDED"
+      }
+    },
+    "message.common.pdfOcrWarning": {
+      "text": "スキャンPDFをOCRで読み取りました。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_OCR_WARNING"
+      }
+    },
+    "message.common.pdfPageLimitExceeded": {
+      "text": "PDFのページ数が上限を超えています。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "PDF_PAGE_LIMIT_EXCEEDED"
+      }
+    },
+    "message.common.requestBodyUnreadable": {
+      "text": "リクエストボディを読み取れません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "REQUEST_BODY_UNREADABLE"
+      }
+    },
+    "message.common.requestParameterInvalid": {
+      "text": "リクエストパラメータが不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "REQUEST_PARAMETER_INVALID"
+      }
+    },
+    "message.common.resourceNotFound": {
+      "text": "%sが見つかりません。id=%s",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "RESOURCE_NOT_FOUND"
+      }
+    },
+    "message.common.routeNotFound": {
+      "text": "要求されたリソースが見つかりません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ROUTE_NOT_FOUND"
+      }
+    },
+    "message.common.routeTargetRoleInvalid": {
+      "text": "指定された通知ロールは利用できません。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ROUTE_TARGET_ROLE_INVALID"
+      }
+    },
+    "message.common.routeTargetRoleRequired": {
+      "text": "通知ロール宛て通知ルート設定では対象ロールを入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ROUTE_TARGET_ROLE_REQUIRED"
+      }
+    },
+    "message.common.routeTargetRoleUnavailable": {
+      "text": "指定された通知ロールは登録されていないか、無効です。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ROUTE_TARGET_ROLE_UNAVAILABLE"
+      }
+    },
+    "message.common.routeTargetUserRequired": {
+      "text": "ユーザー宛て通知ルート設定では対象ユーザーIDを入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "ROUTE_TARGET_USER_REQUIRED"
+      }
+    },
+    "message.common.sourceTypeLabel": {
+      "text": "発生元",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "SOURCE_TYPE_LABEL"
+      }
+    },
+    "message.common.statusCategoryLabel": {
+      "text": "ステータス区分",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "STATUS_CATEGORY_LABEL"
+      }
+    },
+    "message.common.tokenInvalid": {
+      "text": "トークンが無効または期限切れです。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "TOKEN_INVALID"
+      }
+    },
+    "message.common.unexpectedError": {
+      "text": "予期しないエラーが発生しました。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "UNEXPECTED_ERROR"
+      }
+    },
+    "message.common.userResource": {
+      "text": "ユーザー",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "USER_RESOURCE"
+      }
+    },
+    "message.user.currentPasswordIncorrect": {
+      "text": "現在のパスワードが正しくありません。",
+      "visibility": "private",
+      "java": {
+        "category": "user",
+        "name": "CURRENT_PASSWORD_INCORRECT"
+      }
+    },
+    "message.user.passwordByteLimitExceeded": {
+      "text": "新しいパスワードはUTF-8で72バイト以内にしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "user",
+        "name": "PASSWORD_BYTE_LIMIT_EXCEEDED"
+      }
+    },
+    "message.user.passwordConfirmationMismatch": {
+      "text": "新しいパスワードと確認用パスワードが一致しません。",
+      "visibility": "private",
+      "java": {
+        "category": "user",
+        "name": "PASSWORD_CONFIRMATION_MISMATCH"
+      }
+    },
+    "message.user.passwordUnchanged": {
+      "text": "現在とは異なるパスワードを指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "user",
+        "name": "PASSWORD_UNCHANGED"
+      }
+    },
+    "message.user.themeInvalid": {
+      "text": "テーマはlightまたはdarkを指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "user",
+        "name": "THEME_INVALID"
+      }
+    },
+    "message.vehicle.archivedUpdateForbidden": {
+      "text": "管理終了した車両は更新できません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "ARCHIVED_UPDATE_FORBIDDEN"
+      }
+    },
+    "message.vehicle.duplicateCandidate": {
+      "text": "登録済みの車両に一致する可能性があります。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "DUPLICATE_CANDIDATE"
+      }
+    },
+    "message.vehicle.importChassisWarning": {
+      "text": "車台番号を確認して入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_CHASSIS_WARNING"
+      }
+    },
+    "message.vehicle.importExpiryWarning": {
+      "text": "車検有効期間満了日を確認して入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_EXPIRY_WARNING"
+      }
+    },
+    "message.vehicle.importFileEmpty": {
+      "text": "空のファイルは取り込めません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_FILE_EMPTY"
+      }
+    },
+    "message.vehicle.importFilenameTypeMismatch": {
+      "text": "ファイル名とファイル形式が一致しません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_FILENAME_TYPE_MISMATCH"
+      }
+    },
+    "message.vehicle.importImageInvalid": {
+      "text": "画像を解析できませんでした。破損していないか確認してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_IMAGE_INVALID"
+      }
+    },
+    "message.vehicle.importImageSizeExceeded": {
+      "text": "画像の大きさが上限を超えています。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_IMAGE_SIZE_EXCEEDED"
+      }
+    },
+    "message.vehicle.importMediaTypeMismatch": {
+      "text": "ファイル形式が一致しません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_MEDIA_TYPE_MISMATCH"
+      }
+    },
+    "message.vehicle.importMediaTypeUnsupported": {
+      "text": "PDF、PNG、JPEG以外のファイルは取り込めません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_MEDIA_TYPE_UNSUPPORTED"
+      }
+    },
+    "message.vehicle.importNameWarning": {
+      "text": "車名を確認して入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_NAME_WARNING"
+      }
+    },
+    "message.vehicle.importNotReviewable": {
+      "text": "この取込は確認できません。手動登録を利用してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_NOT_REVIEWABLE"
+      }
+    },
+    "message.vehicle.importRegistrationWarning": {
+      "text": "登録番号を確認して入力してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_REGISTRATION_WARNING"
+      }
+    },
+    "message.vehicle.importSizeExceeded": {
+      "text": "ファイルサイズは10 MiB以下にしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_SIZE_EXCEEDED"
+      }
+    },
+    "message.vehicle.importStateConflict": {
+      "text": "この取込の状態が変更されています。再読み込みしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STATE_CONFLICT"
+      }
+    },
+    "message.vehicle.importStorageAccessFailed": {
+      "text": "一時保存先にアクセスできませんでした。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_ACCESS_FAILED"
+      }
+    },
+    "message.vehicle.importStorageAccessUnsafe": {
+      "text": "一時ファイルに安全にアクセスできません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_ACCESS_UNSAFE"
+      }
+    },
+    "message.vehicle.importStorageParentMissing": {
+      "text": "一時保存先の親ディレクトリが存在しません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_PARENT_MISSING"
+      }
+    },
+    "message.vehicle.importStoragePathInvalid": {
+      "text": "一時保存先が不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_PATH_INVALID"
+      }
+    },
+    "message.vehicle.importStorageReferenceInvalid": {
+      "text": "一時ファイル参照が不正です。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_REFERENCE_INVALID"
+      }
+    },
+    "message.vehicle.importStorageUnsafe": {
+      "text": "一時保存先が安全ではありません。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_UNSAFE"
+      }
+    },
+    "message.vehicle.importStorageWriteFailed": {
+      "text": "一時ファイルを保存できませんでした。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "IMPORT_STORAGE_WRITE_FAILED"
+      }
+    },
+    "message.vehicle.inspectionExpiredRemaining": {
+      "text": "満了日を%d日過ぎています。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_EXPIRED_REMAINING"
+      }
+    },
+    "message.vehicle.inspectionExpiryConflict": {
+      "text": "車検満了日が変更されています。画面を再読み込みしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_EXPIRY_CONFLICT"
+      }
+    },
+    "message.vehicle.inspectionExpiryNotExtended": {
+      "text": "新しい満了日は現在の満了日より後の日付を指定してください。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_EXPIRY_NOT_EXTENDED"
+      }
+    },
+    "message.vehicle.inspectionNotificationMessage": {
+      "text": "%s（%s）の車検有効期間満了日は%sです。%s",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_NOTIFICATION_MESSAGE"
+      }
+    },
+    "message.vehicle.inspectionNotificationTitle": {
+      "text": "車検期限のお知らせ（%s）",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_NOTIFICATION_TITLE"
+      }
+    },
+    "message.vehicle.inspectionRemaining": {
+      "text": "満了日まであと%d日です。",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "INSPECTION_REMAINING"
+      }
+    },
+    "validation.auth.login.email.email": {
+      "text": "メールアドレスの形式が正しくありません",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "LOGIN_EMAIL_EMAIL"
+      }
+    },
+    "validation.auth.login.password.required": {
+      "text": "パスワードは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "LOGIN_PASSWORD_REQUIRED"
+      }
+    },
+    "validation.auth.login.password.size": {
+      "text": "パスワードは8文字以上でなければなりません",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "LOGIN_PASSWORD_SIZE"
+      }
+    },
+    "validation.auth.refresh.refreshToken.required": {
+      "text": "リフレッシュトークンは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "REFRESH_REFRESH_TOKEN_REQUIRED"
+      }
+    },
+    "validation.auth.register.email.email": {
+      "text": "メールアドレスの形式が正しくありません",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "REGISTER_EMAIL_EMAIL"
+      }
+    },
+    "validation.auth.register.email.required": {
+      "text": "メールアドレスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "REGISTER_EMAIL_REQUIRED"
+      }
+    },
+    "validation.auth.register.role.required": {
+      "text": "権限は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "REGISTER_ROLE_REQUIRED"
+      }
+    },
+    "validation.auth.userSettings.email.required": {
+      "text": "メールアドレスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "USER_SETTINGS_EMAIL_REQUIRED"
+      }
+    },
+    "validation.auth.userSettings.role.required": {
+      "text": "権限は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "auth",
+        "name": "USER_SETTINGS_ROLE_REQUIRED"
+      }
+    },
+    "validation.batch.agentBatchComplete.executionStatus.required": {
+      "text": "実行ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "AGENT_BATCH_COMPLETE_EXECUTION_STATUS_REQUIRED"
+      }
+    },
+    "validation.batch.agentBatchComplete.logPath.size": {
+      "text": "ログパスは500文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "AGENT_BATCH_COMPLETE_LOG_PATH_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.allowParallelExecution.required": {
+      "text": "並列実行許可フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_ALLOW_PARALLEL_EXECUTION_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.batchName.required": {
+      "text": "バッチ名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_BATCH_NAME_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.batchName.size": {
+      "text": "バッチ名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_BATCH_NAME_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.category.required": {
+      "text": "カテゴリは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_CATEGORY_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.category.size": {
+      "text": "カテゴリは50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_CATEGORY_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.enabled.required": {
+      "text": "有効フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_ENABLED_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.executionType.required": {
+      "text": "実行種別は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_EXECUTION_TYPE_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.executionType.size": {
+      "text": "実行種別は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_EXECUTION_TYPE_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.executionUser.size": {
+      "text": "実行ユーザは255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_EXECUTION_USER_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.failureNotification.required": {
+      "text": "失敗通知は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_FAILURE_NOTIFICATION_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.failureNotification.size": {
+      "text": "失敗通知は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_FAILURE_NOTIFICATION_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.logPath.required": {
+      "text": "ログパスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_LOG_PATH_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.logPath.size": {
+      "text": "ログパスは500文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_LOG_PATH_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.logRetentionDate.required": {
+      "text": "ログ保持期限は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_LOG_RETENTION_DATE_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.maxRetryCount.max": {
+      "text": "最大リトライ回数は9以下で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_MAX_RETRY_COUNT_MAX"
+      }
+    },
+    "validation.batch.batchDefinition.maxRetryCount.min": {
+      "text": "最大リトライ回数は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_MAX_RETRY_COUNT_MIN"
+      }
+    },
+    "validation.batch.batchDefinition.maxRetryCount.required": {
+      "text": "最大リトライ回数は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_MAX_RETRY_COUNT_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.priority.max": {
+      "text": "優先度は9以下で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PRIORITY_MAX"
+      }
+    },
+    "validation.batch.batchDefinition.priority.min": {
+      "text": "優先度は1以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PRIORITY_MIN"
+      }
+    },
+    "validation.batch.batchDefinition.priority.required": {
+      "text": "優先度は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PRIORITY_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.requiredRole.size": {
+      "text": "必要ロールは50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_REQUIRED_ROLE_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.retryIntervalSeconds.min": {
+      "text": "リトライ間隔秒数は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_RETRY_INTERVAL_SECONDS_MIN"
+      }
+    },
+    "validation.batch.batchDefinition.status.size": {
+      "text": "ステータスは20文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_STATUS_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.successNotification.required": {
+      "text": "成功通知は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_SUCCESS_NOTIFICATION_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.successNotification.size": {
+      "text": "成功通知は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_SUCCESS_NOTIFICATION_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.tags.size": {
+      "text": "タグは500文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_TAGS_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.timeoutSeconds.min": {
+      "text": "タイムアウト秒数は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_TIMEOUT_SECONDS_MIN"
+      }
+    },
+    "validation.batch.batchDefinition.timeoutSeconds.required": {
+      "text": "タイムアウト秒数は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_TIMEOUT_SECONDS_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.viewName.required": {
+      "text": "表示名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_VIEW_NAME_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinition.viewName.size": {
+      "text": "表示名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_VIEW_NAME_SIZE"
+      }
+    },
+    "validation.batch.batchDefinition.workingDirectory.size": {
+      "text": "作業ディレクトリは500文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_WORKING_DIRECTORY_SIZE"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.batchDefinitionId.required": {
+      "text": "バッチ定義IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_BATCH_DEFINITION_ID_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.displayOrder.min": {
+      "text": "表示順は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_DISPLAY_ORDER_MIN"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.displayOrder.required": {
+      "text": "表示順は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_DISPLAY_ORDER_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.dynamicValueType.size": {
+      "text": "動的値種別は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_DYNAMIC_VALUE_TYPE_SIZE"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.enabled.required": {
+      "text": "有効フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_ENABLED_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.parameterName.required": {
+      "text": "パラメータ名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_PARAMETER_NAME_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.parameterName.size": {
+      "text": "パラメータ名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_PARAMETER_NAME_SIZE"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.parameterType.required": {
+      "text": "パラメータ種別は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_PARAMETER_TYPE_REQUIRED"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.parameterType.size": {
+      "text": "パラメータ種別は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_PARAMETER_TYPE_SIZE"
+      }
+    },
+    "validation.batch.batchDefinitionParameter.valueFormat.size": {
+      "text": "値フォーマットは100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_DEFINITION_PARAMETER_VALUE_FORMAT_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionFileRegister.contentType.size": {
+      "text": "Content-Typeは255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_FILE_REGISTER_CONTENT_TYPE_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionFileRegister.fileName.size": {
+      "text": "ファイル名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_FILE_REGISTER_FILE_NAME_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionFileRegister.filePath.required": {
+      "text": "ファイルパスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_FILE_REGISTER_FILE_PATH_REQUIRED"
+      }
+    },
+    "validation.batch.batchExecutionFileRegister.filePath.size": {
+      "text": "ファイルパスは1000文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_FILE_REGISTER_FILE_PATH_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionHistory.batchDefinitionId.required": {
+      "text": "バッチ定義IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_BATCH_DEFINITION_ID_REQUIRED"
+      }
+    },
+    "validation.batch.batchExecutionHistory.executionResult.required": {
+      "text": "実行結果は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_EXECUTION_RESULT_REQUIRED"
+      }
+    },
+    "validation.batch.batchExecutionHistory.executionResult.size": {
+      "text": "実行結果は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_EXECUTION_RESULT_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionHistory.executionStartedDt.required": {
+      "text": "実行開始日時は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_EXECUTION_STARTED_DT_REQUIRED"
+      }
+    },
+    "validation.batch.batchExecutionHistory.logPath.size": {
+      "text": "ログパスは500文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_LOG_PATH_SIZE"
+      }
+    },
+    "validation.batch.batchExecutionHistory.testExecution.required": {
+      "text": "テスト実行フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_HISTORY_TEST_EXECUTION_REQUIRED"
+      }
+    },
+    "validation.batch.batchExecutionRequestCreate.targetAgentId.required": {
+      "text": "対象Agent IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_EXECUTION_REQUEST_CREATE_TARGET_AGENT_ID_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.allowHolidayExecution.required": {
+      "text": "休日実行許可フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_ALLOW_HOLIDAY_EXECUTION_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.batchDefinitionId.required": {
+      "text": "バッチ定義IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_BATCH_DEFINITION_ID_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.cronExpression.required": {
+      "text": "Cron式は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_CRON_EXPRESSION_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.cronExpression.size": {
+      "text": "Cron式は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_CRON_EXPRESSION_SIZE"
+      }
+    },
+    "validation.batch.batchSchedule.enabled.required": {
+      "text": "有効フラグは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_ENABLED_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.priority.max": {
+      "text": "優先度は9以下で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_PRIORITY_MAX"
+      }
+    },
+    "validation.batch.batchSchedule.priority.min": {
+      "text": "優先度は1以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_PRIORITY_MIN"
+      }
+    },
+    "validation.batch.batchSchedule.priority.required": {
+      "text": "優先度は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_PRIORITY_REQUIRED"
+      }
+    },
+    "validation.batch.batchSchedule.targetAgentId.required": {
+      "text": "対象エージェントIDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "batch",
+        "name": "BATCH_SCHEDULE_TARGET_AGENT_ID_REQUIRED"
+      }
+    },
+    "validation.common.batchGlobalSetting.isResultWaitValid.valid": {
+      "text": "結果待ち期限は標準実行タイムアウトより長くしてください。",
+      "visibility": "private",
+      "java": {
+        "category": "common",
+        "name": "BATCH_GLOBAL_SETTING_IS_RESULT_WAIT_VALID_VALID"
+      }
+    },
+    "validation.device.deviceMaster.address.required": {
+      "text": "アドレスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_ADDRESS_REQUIRED"
+      }
+    },
+    "validation.device.deviceMaster.deviceName.required": {
+      "text": "デバイス名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DEVICE_NAME_REQUIRED"
+      }
+    },
+    "validation.device.deviceMaster.status.required": {
+      "text": "ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_STATUS_REQUIRED"
+      }
+    },
+    "validation.device.deviceMasterDetail.address.required": {
+      "text": "IPアドレスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DETAIL_ADDRESS_REQUIRED"
+      }
+    },
+    "validation.device.deviceMasterDetail.devicename.required": {
+      "text": "デバイス名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DETAIL_DEVICENAME_REQUIRED"
+      }
+    },
+    "validation.device.deviceMasterDetail.location.required": {
+      "text": "ロケーションは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DETAIL_LOCATION_REQUIRED"
+      }
+    },
+    "validation.device.deviceMasterDetail.mqttClientId.required": {
+      "text": "MQTTクライアントIDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DETAIL_MQTT_CLIENT_ID_REQUIRED"
+      }
+    },
+    "validation.device.deviceMasterDetail.status.required": {
+      "text": "ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "DEVICE_MASTER_DETAIL_STATUS_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.logPath.required": {
+      "text": "ログパスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_LOG_PATH_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.logPath.size": {
+      "text": "ログパスは255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_LOG_PATH_SIZE"
+      }
+    },
+    "validation.device.serviceMaster.noticeLevel.size": {
+      "text": "通知レベルは50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_NOTICE_LEVEL_SIZE"
+      }
+    },
+    "validation.device.serviceMaster.serviceName.required": {
+      "text": "サービス名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_SERVICE_NAME_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.serviceName.size": {
+      "text": "サービス名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_SERVICE_NAME_SIZE"
+      }
+    },
+    "validation.device.serviceMaster.status.required": {
+      "text": "ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_STATUS_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.status.size": {
+      "text": "ステータスは50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_STATUS_SIZE"
+      }
+    },
+    "validation.device.serviceMaster.targetMachine.required": {
+      "text": "ターゲットマシンは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_TARGET_MACHINE_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.viewName.required": {
+      "text": "表示名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_VIEW_NAME_REQUIRED"
+      }
+    },
+    "validation.device.serviceMaster.viewName.size": {
+      "text": "表示名は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "device",
+        "name": "SERVICE_MASTER_VIEW_NAME_SIZE"
+      }
+    },
+    "validation.item.itemMaster.category.required": {
+      "text": "カテゴリは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_CATEGORY_REQUIRED"
+      }
+    },
+    "validation.item.itemMaster.category.size": {
+      "text": "カテゴリは100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_CATEGORY_SIZE"
+      }
+    },
+    "validation.item.itemMaster.itemName.required": {
+      "text": "品目名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_ITEM_NAME_REQUIRED"
+      }
+    },
+    "validation.item.itemMaster.itemName.size": {
+      "text": "品目名は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_ITEM_NAME_SIZE"
+      }
+    },
+    "validation.item.itemMaster.janCode.size": {
+      "text": "JANコードは20文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_JAN_CODE_SIZE"
+      }
+    },
+    "validation.item.itemMaster.manufacturer.size": {
+      "text": "メーカーは255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_MANUFACTURER_SIZE"
+      }
+    },
+    "validation.item.itemMaster.minQuantity.min": {
+      "text": "最低数量は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_MIN_QUANTITY_MIN"
+      }
+    },
+    "validation.item.itemMaster.minQuantity.required": {
+      "text": "最低数量は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_MIN_QUANTITY_REQUIRED"
+      }
+    },
+    "validation.item.itemMaster.modelNumber.size": {
+      "text": "型番は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_MODEL_NUMBER_SIZE"
+      }
+    },
+    "validation.item.itemMaster.status.required": {
+      "text": "ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_STATUS_REQUIRED"
+      }
+    },
+    "validation.item.itemMaster.status.size": {
+      "text": "ステータスは50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_STATUS_SIZE"
+      }
+    },
+    "validation.item.itemMaster.unit.required": {
+      "text": "単位は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_UNIT_REQUIRED"
+      }
+    },
+    "validation.item.itemMaster.unit.size": {
+      "text": "単位は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_MASTER_UNIT_SIZE"
+      }
+    },
+    "validation.item.itemStock.inventoryItemId.required": {
+      "text": "品目IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_INVENTORY_ITEM_ID_REQUIRED"
+      }
+    },
+    "validation.item.itemStock.inventoryStatus.required": {
+      "text": "在庫ステータスは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_INVENTORY_STATUS_REQUIRED"
+      }
+    },
+    "validation.item.itemStock.quantity.min": {
+      "text": "現在数量は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_QUANTITY_MIN"
+      }
+    },
+    "validation.item.itemStock.quantity.required": {
+      "text": "現在数量は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_QUANTITY_REQUIRED"
+      }
+    },
+    "validation.item.itemStock.replenishQuantity.min": {
+      "text": "補充時の推奨数量は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_REPLENISH_QUANTITY_MIN"
+      }
+    },
+    "validation.item.itemStock.storageLocation.required": {
+      "text": "保管場所は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_STORAGE_LOCATION_REQUIRED"
+      }
+    },
+    "validation.item.itemStock.storageLocation.size": {
+      "text": "保管場所は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_STORAGE_LOCATION_SIZE"
+      }
+    },
+    "validation.item.itemStockOperation.changeType.required": {
+      "text": "変更種別は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_OPERATION_CHANGE_TYPE_REQUIRED"
+      }
+    },
+    "validation.item.itemStockOperation.inventoryStockId.required": {
+      "text": "在庫IDは必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_OPERATION_INVENTORY_STOCK_ID_REQUIRED"
+      }
+    },
+    "validation.item.itemStockOperation.quantity.min": {
+      "text": "数量は0以上で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_OPERATION_QUANTITY_MIN"
+      }
+    },
+    "validation.item.itemStockOperation.quantity.required": {
+      "text": "数量は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_OPERATION_QUANTITY_REQUIRED"
+      }
+    },
+    "validation.item.itemStockOperation.reason.size": {
+      "text": "変更理由は255文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "item",
+        "name": "ITEM_STOCK_OPERATION_REASON_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.chassisNumber.required": {
+      "text": "車台番号は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_CHASSIS_NUMBER_REQUIRED"
+      }
+    },
+    "validation.vehicle.vehicle.chassisNumber.size": {
+      "text": "車台番号は100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_CHASSIS_NUMBER_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.displayName.required": {
+      "text": "表示名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_DISPLAY_NAME_REQUIRED"
+      }
+    },
+    "validation.vehicle.vehicle.displayName.size": {
+      "text": "表示名は100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_DISPLAY_NAME_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.firstRegistrationMonth.pattern": {
+      "text": "初度登録年月はYYYY-MM形式で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_FIRST_REGISTRATION_MONTH_PATTERN"
+      }
+    },
+    "validation.vehicle.vehicle.inspectionExpiryDate.required": {
+      "text": "車検有効期間満了日は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_INSPECTION_EXPIRY_DATE_REQUIRED"
+      }
+    },
+    "validation.vehicle.vehicle.modelCode.size": {
+      "text": "型式は100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_MODEL_CODE_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.notes.size": {
+      "text": "備考は2000文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_NOTES_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.purpose.size": {
+      "text": "用途は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_PURPOSE_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.registrationNumber.required": {
+      "text": "登録番号は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_REGISTRATION_NUMBER_REQUIRED"
+      }
+    },
+    "validation.vehicle.vehicle.registrationNumber.size": {
+      "text": "登録番号は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_REGISTRATION_NUMBER_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.usageCategory.size": {
+      "text": "用途区分は50文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_USAGE_CATEGORY_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.vehicleIdentificationCode.size": {
+      "text": "車両識別符号は100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_VEHICLE_IDENTIFICATION_CODE_SIZE"
+      }
+    },
+    "validation.vehicle.vehicle.vehicleName.required": {
+      "text": "車名は必須です",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_VEHICLE_NAME_REQUIRED"
+      }
+    },
+    "validation.vehicle.vehicle.vehicleName.size": {
+      "text": "車名は100文字以内で入力してください",
+      "visibility": "private",
+      "java": {
+        "category": "vehicle",
+        "name": "VEHICLE_VEHICLE_NAME_SIZE"
+      }
+    }
+  }
+}

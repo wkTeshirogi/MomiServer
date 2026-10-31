@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+// This standalone build deliberately does not apply the application's build or connect to its database.
+def backendVersions = new Properties()
+file('../../gradle.properties').withInputStream { backendVersions.load(it) }
+
+dependencies {
+    testImplementation platform('org.springframework.boot:spring-boot-dependencies:3.5.0')
+    constraints {
+        ['tomcat-embed-core', 'tomcat-embed-el', 'tomcat-embed-websocket'].each { artifact ->
+            testImplementation("org.apache.tomcat.embed:${artifact}:${backendVersions.getProperty('tomcatVersion')}")
+        }
+    }
+    testImplementation platform("com.fasterxml.jackson:jackson-bom:${backendVersions.getProperty('jacksonBomVersion')}")
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.eclipse.jgit:org.eclipse.jgit:7.8.0.202609011348-r'
+    testImplementation 'org.eclipse.jgit:org.eclipse.jgit.http.server:7.8.0.202609011348-r'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    maxParallelForks = 1
+    outputs.upToDateWhen { false }
+    doFirst {
+        delete(layout.buildDirectory.dir('reports/spike'))
+    }
+    systemProperty 'spike.output', layout.buildDirectory.dir('reports/spike').get().asFile.absolutePath
+    systemProperty 'junit.jupiter.execution.timeout.default', '120 s'
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}
